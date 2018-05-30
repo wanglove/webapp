@@ -12,5 +12,5 @@ DEBUG = True
 MAIL_SERVER = 'smtp.126.com'
 MAIL_PORT = 25
 MAIL_USERNAME = 'wanglove@126.com'
-MAIL_PASSWORD = 'Water12345'
+MAIL_PASSWORD = '********'
 MAIL_DEFAULT_SENDER = 'wanglove@126.com'
