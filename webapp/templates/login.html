@@ -1,0 +1,79 @@
+{% extends '__base__.html' %}
+
+{% block title %}登陆{% endblock %}
+
+{% block vuejs %}
+    <script>
+        var vmAuth = new Vue({
+            el: '#vm',
+            data: {
+                username: 'wanglei@126.com',
+                password: '123456'
+            },
+            methods: {
+                submit: function () {
+                    if (!this.username){
+                        return alert('请输入邮箱');
+                    }
+                    if (!this.password){
+                        return alert('请输入密码');
+                    }
+                    if (this.password.length < 6){
+                        return alert('密码长度至少6位字符');
+                    }
+
+                    var username = this.username.toLowerCase();
+                    var password = CryptoJS.SHA1(username + ':' + this.password).toString();
+
+                    var data = {
+                        'username': username,
+                        'password': password
+                    };
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/api/authenticate',
+                        dataType: 'json',
+                        data: data,
+                        success: function (msg) {
+                            location.assign('/');
+                        },
+                        error: function (msg) {
+                            alert(msg.responseJSON.message);
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="uk-height-1-1">
+        <div class="uk-vertical-align uk-text-center uk-height-1-1">
+            <div class="uk-vertical-align-middle" style="width: 320px">
+                <form id="vm" v-on:submit.prevent="submit" class="uk-panel uk-panel-box uk-form">
+                    <div class="uk-alert uk-alert-danger uk-hidden"></div>
+                    <div class="uk-form-row">
+                        <div class="uk-form-icon uk-width-1-1">
+                            <i class="uk-icon-envelope-o"></i>
+                            <input v-model.trim="username" name="username" type="email" placeholder="电子邮件" maxlength="50" class="uk-width-1-1 uk-form-large">
+                        </div>
+                    </div>
+                    <div class="uk-form-row">
+                        <div class="uk-form-icon uk-width-1-1">
+                            <i class="uk-icon-lock"></i>
+                            <input v-model.trim="password" name="password" type="password" placeholder="密码" maxlength="50" class="uk-width-1-1 uk-form-large">
+                        </div>
+                    </div>
+                    <div class="uk-form-row">
+                        <button type="submit" class="uk-width-1-1 uk-button uk-button-primary uk-button-large"><i class="uk-icon-sign-in"></i> 登录</button>
+                    </div>
+                    <div class="uk-form-row">
+                        <a class="uk-width-1-1 uk-button uk-button-primary uk-button-large" href="/resetpassword"><i class="uk-icon-key"></i>重置密码</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+{% endblock %}

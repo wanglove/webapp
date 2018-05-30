@@ -1,0 +1,142 @@
+{% extends '__base__.html' %}
+
+{% block title %}注册{% endblock %}
+
+{% block vuejs %}
+
+<script>
+    function validateEmail(email) {
+        var re = /^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$/;
+        return re.test(email.toLowerCase());
+    }
+
+    var vm = new Vue({
+        el: '#vm',
+        data: {
+            nickname: 'wanglei',
+            email: '251319710@qq.com',
+            captcha: '',
+            password1: '123456',
+            password2: '123456'
+        },
+        methods: {
+            submit: function () {
+                if (!this.nickname){
+                    return alert('请输入昵称');
+                }
+                if (!validateEmail(this.email)){
+                    return alert('请输入正确的邮箱地址');
+                }
+                if (!this.captcha){
+                    return alert('请输入邮箱中的接收到的验证码')
+                }
+                if (this.password1.length<6){
+                    return alert('密码长度至少8位字符');
+                }
+                if (this.password1 !== this.password2){
+                    return alert('两次输入的密码不一致');
+                }
+
+                var username = this.email.toLowerCase();
+                //密码sha1加密
+                var password = CryptoJS.SHA1(username + ':' + this.password1).toString();
+
+
+                var data = {
+                    'nickname':this.nickname,
+                    'username': username,
+                    'captcha': this.captcha,
+                    'password': password,
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/users',
+                    dataType: 'json',
+                    data: data,
+                    success: function (msg) {
+                        alert(msg.message);
+                        location.assign('/');
+                    },
+                    error: function (msg) {
+                        alert(msg.responseJSON.message);
+                    }
+                })
+            },
+            get_captcha: function () {
+                if (!validateEmail(this.email)){
+                    return alert('请输入正确的邮箱地址');
+                }
+
+                var email = this.email.toLowerCase();
+                var data = {
+                    'username': email
+                };
+                //校验邮箱是否重复注册，发送验证码到目标邮箱
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/captchas',
+                    dataType: 'json',
+                    data: data,
+                    success: function (msg) {
+                        alert(msg.message);
+                    },
+                    error: function (msg) {
+                        alert(msg.responseText);
+                    }
+                })
+
+            }
+        }
+    })
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="uk-width-2-3">
+        <h1>欢迎注册！</h1>
+        <!-- 提交并且阻止页面刷新 -->
+        <form id="vm" v-on:submit.prevent="submit" class="uk-form uk-form-stacked">
+            <div class="uk-alert uk-alert-danger uk-hidden"></div>
+            <div class="uk-form-row">
+                <label class="uk-form-label">昵称:</label>
+                <div class="uk-form-controls">
+                    <input v-model.trim="nickname" type="text" maxlength="50" placeholder="昵称" class="uk-form-width-medium">
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <label class="uk-form-label">邮箱地址:</label>
+                <div class="uk-form-controls">
+                    <!-- .trim去除前后空格 -->
+                    <input v-model.trim="email" type="email" maxlength="50" placeholder="your-name@example.com" class="uk-form-width-medium">
+                    <button type="button" v-on:click.prevent="get_captcha" class="uk-button uk-button-primary"><i class="uk-icon-send"></i>获取验证码</button>
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <label class="uk-form-label">邮箱验证码:</label>
+                <div class="uk-form-controls">
+                    <!-- .trim去除前后空格 -->
+                    <input v-model.trim="captcha" type="text" maxlength="50" placeholder="验证码" class="uk-form-width-medium">
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <label class="uk-form-label">输入密码:</label>
+                <div class="uk-form-controls">
+                    <input v-model.trim="password1" type="password" maxlength="50" placeholder="输入密码" class="uk-form-width-medium">
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <label class="uk-form-label">重复密码:</label>
+                <div class="uk-form-controls">
+                    <input v-model.trim="password2" type="password" maxlength="50" placeholder="重复密码" class="uk-form-width-medium">
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <button type="submit" class="uk-button uk-button-primary"><i class="uk-icon-user"></i>点击注册</button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
