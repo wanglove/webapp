@@ -11,6 +11,6 @@ DEBUG = True
 # 邮件模块配置
 MAIL_SERVER = 'smtp.126.com'
 MAIL_PORT = 25
-MAIL_USERNAME = 'wanglove@126.com'
-MAIL_PASSWORD = '********'
-MAIL_DEFAULT_SENDER = 'wanglove@126.com'
+MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+MAIL_DEFAULT_SENDER = os.environ.get('MAIL_USERNAME')
