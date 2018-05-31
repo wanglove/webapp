@@ -26,6 +26,7 @@ class AuthApi(Resource):
             serializer = Serializer(
                 current_app.config['SECRET_KEY'],
                 expires_in=600)
-            return {'token': serializer.dumps({'id': user.id}).decode()}
+            new_token = serializer.dumps({'id': user.id}).decode()
+            return {'token': new_token}, 200, {'Set-Cookie': 'token=%s;Domain=0.0.0.0;Path=/;HttpOnly'%new_token}
         else:
             return {'message': '用户名或密码错误'}, 401

@@ -7,7 +7,7 @@
         var vmAuth = new Vue({
             el: '#vm',
             data: {
-                username: 'wanglei@126.com',
+                username: '251319710@qq.com',
                 password: '123456'
             },
             methods: {
@@ -35,7 +35,7 @@
                         url: '/api/authenticate',
                         dataType: 'json',
                         data: data,
-                        success: function (msg) {
+                        success: function () {
                             location.assign('/');
                         },
                         error: function (msg) {
@@ -49,10 +49,11 @@
 {% endblock %}
 
 {% block content %}
-    <div class="uk-height-1-1">
+    <div class="uk-container-center" style="height: 600px">
         <div class="uk-vertical-align uk-text-center uk-height-1-1">
             <div class="uk-vertical-align-middle" style="width: 320px">
                 <form id="vm" v-on:submit.prevent="submit" class="uk-panel uk-panel-box uk-form">
+                    <h1 class="uk-panel-title"><i class="uk-icon-github-alt"></i>用户登陆</h1>
                     <div class="uk-alert uk-alert-danger uk-hidden"></div>
                     <div class="uk-form-row">
                         <div class="uk-form-icon uk-width-1-1">
@@ -75,5 +76,5 @@
                 </form>
             </div>
         </div>
-        </div>
+    </div>
 {% endblock %}
