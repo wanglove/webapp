@@ -16,8 +16,8 @@
             nickname: 'wanglei',
             email: '251319710@qq.com',
             captcha: '',
-            password1: '123456',
-            password2: '123456'
+            password1: '12345678',
+            password2: '12345678'
         },
         methods: {
             submit: function () {
@@ -30,7 +30,7 @@
                 if (!this.captcha){
                     return alert('请输入邮箱中的接收到的验证码')
                 }
-                if (this.password1.length<6){
+                if (this.password1.length<8){
                     return alert('密码长度至少8位字符');
                 }
                 if (this.password1 !== this.password2){

@@ -16,7 +16,7 @@ app.config.from_object('webapp.config')
 db.init_app(app)
 
 # 创建表，生产中去除
-db.drop_all(app=app)
+#db.drop_all(app=app)
 db.create_all(app=app)
 
 # 初始化邮件发送实例

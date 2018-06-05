@@ -4,6 +4,9 @@ DEBUG = True
 
 SECRET_KEY = os.urandom(24)
 
+# token有效期,单位秒
+TOKEN_EXPIRES_TIME = 600
+
 # 数据库链接配置
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:123456@localhost:3306/geektest?charset=utf8'
 SQLALCHEMY_TRACK_MODIFICATIONS = True

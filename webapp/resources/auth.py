@@ -1,32 +1,71 @@
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
 from flask_restful import Resource, reqparse
-from webapp.models import User
+from webapp.models import db, User, UserLoginContrl
 
 
 # 用户授权api
 class AuthApi(Resource):
-    def __init__(self):
+
+    # 用户登陆接口
+    def post(self):
+
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('username', type=str, location='form', required=True, help='用户名不能为空')
         self.parser.add_argument('password', type=str, location='form', required=True, help='密码不能为空')
 
-    def post(self):
-
         args = self.parser.parse_args()
 
         user = User.query.filter_by(username=args['username']).first()
-
+        # 根据用户名找不到用户，直接返回401
         if user is None:
             return {'message': '用户名或密码错误'}, 401
 
-        # 判断密码是否和用户表中的一致
+        # 用户存在，密码正确
         if user.check_password(args['password']):
-            # serializer object will be saved the token period of time.
             serializer = Serializer(
                 current_app.config['SECRET_KEY'],
-                expires_in=600)
+                expires_in=current_app.config['TOKEN_EXPIRES_TIME'])
             new_token = serializer.dumps({'id': user.id}).decode()
-            return {'token': new_token}, 200, {'Set-Cookie': 'token=%s;Domain=0.0.0.0;Path=/;HttpOnly'%new_token}
+
+            # 用户登陆数据存入数据库，用来重复登陆控制
+            user_ctl = UserLoginContrl.query.filter_by(id=user.id).first()
+            if user_ctl:
+                db.session.delete(user_ctl)
+                db.session.commit()
+            new_user_ctl = UserLoginContrl(user.id, user.username, new_token)
+            db.session.add(new_user_ctl)
+            db.session.commit()
+
+            return {'message': '登陆成功'}, 200, {'Set-Cookie': 'token=%s;Domain=0.0.0.0;Path=/;HttpOnly'%new_token}
+        # 用户存在，密码输错
         else:
             return {'message': '用户名或密码错误'}, 401
+
+    # 用户登出
+    def delete(self):
+
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('token', type=str, location='cookies', required=True, help='用户无授权')
+
+        args = self.parser.parse_args()
+
+        if args.token is None:
+            return {'message': '用户无授权'}, 401
+
+        user = User.verify_auth_token(args.token)
+        if user is None:
+            return {'message': '用户授权无效或过期'}, 401, \
+                   {'Set-Cookie': 'token=deleted;Domain=0.0.0.0;Path=/;Max-age=0;HttpOnly'}
+
+        # 登出的token要与控制表里的一致,删除该用户登陆控制表中的数据
+        user_ctl = UserLoginContrl.query.get(user.id)
+        if user_ctl and user_ctl.token == args.token:
+            db.session.delete(user_ctl)
+            db.session.commit()
+            return {'message': '用户登出成功'}, 204, \
+                   {'Set-Cookie': 'token=deleted;Domain=0.0.0.0;Path=/;Max-age=0;HttpOnly'}
+        else:
+            return {'message': '用户授权无效或过期'}, 401, \
+                   {'Set-Cookie': 'token=deleted;Domain=0.0.0.0;Path=/;Max-age=0;HttpOnly'}
+

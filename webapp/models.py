@@ -40,7 +40,7 @@ class User(db.Model):
         return self.id
 
     # 校验token是否正确有效
-    def verify_auth_token(self, token):
+    def verify_auth_token(token):
         serializer = Serializer(
             current_app.config['SECRET_KEY'])
         try:
@@ -73,13 +73,34 @@ class Captcha(db.Model):
         else:
             return True
 
-    # 3次输入不正确，锁定5min钟，防止暴力破解
+    # 3次输入不正确，锁定10min钟，防止暴力破解
     def verify_captcha_too_many_try(self):
         self.try_num += 1
         db.session.commit()
 
         if self.try_num > 3:
             return True
+        else:
+            return False
+
+class UserLoginContrl(db.Model):
+
+    __tablename__ = 'user_login_contrl'
+    id = db.Column(db.String(45), primary_key=True, comment='用户id')
+    username = db.Column(db.String(50), nullable=False, unique=True, comment='用户名(邮箱)')
+    token = db.Column(db.String(255), comment='用户token')
+    create_time = db.Column(db.DateTime, default=db.func.current_timestamp(), comment='登陆时间')
+
+    def __init__(self, id, username, token=None):
+        self.id = id
+        self.username = username
+        self.token = token
+
+    def verify_user_single_login(uid, token):
+        user_ctl = UserLoginContrl.query.get(uid)
+        if user_ctl:
+            if user_ctl.token == token:
+                return True
         else:
             return False
 
