@@ -3,7 +3,82 @@
 {% block title %}首页{% endblock %}
 
 {% block content %}
-    <div>
-        <h1>首页</h1>
+    <div id="post" class="uk-width-medium-3-4">
+        <article class="uk-article" v-for="post in posts">
+            <h2><a v-bind:href="'/post/' + post.id">{[ post.title ]}</a></h2>
+            <p class="uk-article-meta">发表于{[ post.create_time ]}</p>
+            <p>{[ post.summary ]}</p>
+        </article>
+        <hr class="uk-article-divider">
+        <button v-if="has_next" v-on:click.prevent="read_more()" class="uk-button uk-button-large uk-width-1-1 uk-margin-small-bottom" type="button">继续阅读</button>
     </div>
+
+    <div class="uk-width-medium-1-4">
+        <div class="uk-panel uk-panel-header">
+            <h3 class="uk-panel-title"><i class="uk-icon-star"></i> 推荐阅读</h3>
+            <ul class="uk-list uk-list-line">
+                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">编程</a></li>
+                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">读书</a></li>
+                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">Python教程</a></li>
+                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">Git教程</a></li>
+            </ul>
+        </div>
+        <div class="uk-panel uk-panel-header">
+            <h3 class="uk-panel-title"><i class="uk-icon-bookmark"></i> 站点说明</h3>
+            <p>本站提供免费的软件测试相关教程和视频,欢迎大家学习和交流！</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block vuejs %}
+<script>
+    var vm = new Vue({
+        delimiters: ['{[', ']}'],
+        el: '#post',
+        data: {
+            page: '',
+            pages: '',
+            has_next: false,
+            posts: []
+        },
+        created: function () {
+            $.ajax({
+                type: 'get',
+                url: '/api/posts?per_page=2',
+                dataType: 'json',
+                success: function (msg) {
+                    console.log("文章加载成功:");
+                    vm.page = msg.page;
+                    vm.has_next = msg.has_next;
+                    vm.posts = vm.posts.concat(msg.posts);
+                },
+                error: function (msg) {
+                    alert("文章加载失败");
+                }
+            });
+
+        },
+        methods: {
+            read_more: function () {
+                this.page += 1;
+                page = this.page;
+                $.ajax({
+                    type: 'get',
+                    url: '/api/posts?page='+page+'&'+'per_page=2',
+                    dataType: 'json',
+                    success: function (msg) {
+                        vm.has_next = msg.has_next;
+                        vm.page = msg.page;
+                        vm.posts = vm.posts.concat(msg.posts);
+                        console.log("继续阅读,文章加载成功");
+                    },
+                    error: function (msg) {
+                        console.log("继续阅读,文章加载失败");
+                        return -1;
+                    }
+                });
+            }
+        }
+    })
+</script>
 {% endblock %}

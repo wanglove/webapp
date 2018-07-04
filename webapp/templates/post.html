@@ -1,0 +1,48 @@
+{% extends '__base__.html' %}
+
+{% block title %}文章加载中...{% endblock %}
+
+{% block content %}
+    <div id="post" class="uk-width-medium-3-4">
+        <article class="uk-article">
+            <h1>{[ post.title ]}</h1>
+            <p class="uk-article-meta">发表于{[ post.create_time ]}</p>
+            <p><span v-html="post.content"></span></p>
+        </article>
+    </div>
+{% endblock %}
+
+{% block vuejs %}
+<script>
+    post_url='/api/posts/{{ post_id }}';
+    var vm = new Vue({
+        delimiters: ['{[', ']}'],
+        el: '#post',
+        data: {
+            post: {
+                title: '',
+                create_time: '',
+                content: ''
+            }
+        },
+        created: function () {
+            $.ajax({
+                type: 'get',
+                url: post_url,
+                dataType: 'json',
+                success: function (msg) {
+                    console.log("文章加载成功:");
+                    vm.post.title = msg.posts[0].title;
+                    vm.post.create_time = msg.posts[0].create_time;
+                    vm.post.content = marked(msg.posts[0].content);
+                    $('title').html(vm.post.title)   //设置网页标题
+                },
+                error: function (msg) {
+                    alert("文章加载失败");
+                }
+            });
+
+        }
+    })
+</script>
+{% endblock %}

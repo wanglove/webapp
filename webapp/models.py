@@ -18,6 +18,8 @@ class User(db.Model):
     nickname = db.Column(db.String(255), nullable=False, comment='昵称')
     phone = db.Column(db.String(13), comment='手机号码')
     create_time = db.Column(db.DateTime, default=db.func.current_timestamp(), comment='账号创建时间')
+    update_time = db.Column(db.DateTime, default=db.func.current_timestamp(),
+                            onupdate=db.func.current_timestamp(), comment='账号变更时间')
     is_active = db.Column(db.String(1), default='1', comment='账户状态:激活=1|锁定=0')
 
     def __init__(self, username, password, nickname, phone):
@@ -105,3 +107,34 @@ class UserLoginContrl(db.Model):
             return False
 
 
+class Post(db.Model):
+    __tablename__ = 'posts'
+    id = db.Column(db.String(45), primary_key=True, comment='文章id')
+    userid = db.Column(db.String(50), comment='作者用户id')
+    username = db.Column(db.String(50), comment='作者用户名')
+    title = db.Column(db.String(50), comment='文章标题')
+    summary = db.Column(db.String(200), comment='文章摘要')
+    content = db.Column(db.Text, comment='文章内容')
+    create_time = db.Column(db.DateTime, default=db.func.current_timestamp(), comment='创建时间')
+    update_time = db.Column(db.DateTime, default=db.func.current_timestamp(),
+                            onupdate=db.func.current_timestamp(), comment='更新时间')
+
+    def __init__(self, userid, username, title, summary, content):
+        self.id = str(uuid4())
+        self.userid = userid
+        self.username = username
+        self.title = title
+        self.summary = summary
+        self.content = content
+
+
+class Comment(db.Model):
+    __tablename__='comments'
+    id = db.Column(db.String(45), primary_key=True, comment='评论id')
+    blogid = db.Column(db.String(45), comment='文章id')
+    userid = db.Column(db.String(50), comment='作者用户id')
+    username = db.Column(db.String(50), comment='作者用户名')
+    content = db.Column(db.Text, comment='评论内容')
+    create_time = db.Column(db.DateTime, default=db.func.current_timestamp(), comment='创建时间')
+    update_time = db.Column(db.DateTime, default=db.func.current_timestamp(),
+                            onupdate=db.func.current_timestamp(), comment='更新时间')

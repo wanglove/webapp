@@ -1,0 +1,165 @@
+{% extends '__base__.html' %}
+
+{% block title %}管理文章{% endblock %}
+
+{% block content %}
+
+    <div class="uk-width-1-1 uk-margin-bottom">
+        <div class="uk-panel uk-panel-box">
+            <ul class="uk-breadcrumb">
+                <li><a href="/manage/comments">评论</a></li>
+                <li class="uk-active"><span>文章</span></li>
+                <li><a href="/manage/users">用户</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="vm" class="uk-width-1-1">
+        <a href="/manage/posts/create" class="uk-button uk-button-primary"><i class="uk-icon-plus"></i>新文章</a>
+
+        <table class="uk-table uk-table-hover">
+            <thead>
+                <tr>
+                    <th class="uk-width-5-10">标题 / 摘要</th>
+                    <th class="uk-width-2-10">作者</th>
+                    <th class="uk-width-2-10">创建时间</th>
+                    <th class="uk-width-1-10">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="post in posts" >
+                    <td>
+                        <a target="_blank" v-bind:href="'/post/'+post.id">{[ post.title ]}</a>
+                    </td>
+                    <td>
+                        <a target="_blank" v-bind:href="'/user/'+post.userid">{[ post.username ]}</a>
+                    </td>
+                    <td>
+                        <span v-text="post.create_time"></span>
+                    </td>
+                    <td>
+                        <a href="#0" v-on:click="edit_post(post)"><i class="uk-icon-edit"></i></a>
+                        <a href="#0" v-on:click="delete_post(post)"><i class="uk-icon-trash-o"></i></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <pagination
+                v-bind:page="page"
+                v-bind:pages="pages"
+                v-bind:has_prev="has_prev"
+                v-bind:has_next="has_next"
+                v-bind:posts="posts"
+                v-on:click-prev="prev_page"
+                v-on:click-next="next_page"
+        ></pagination>
+    </div>
+
+{% endblock %}
+
+{% block vuejs %}
+<script>
+    Vue.component('pagination', {
+        props:['page','pages', 'has_prev','has_next'],
+        template: `
+            <ul class="uk-pagination">
+                <li v-if="! has_prev" class="uk-disabled"><span><i class="uk-icon-angle-double-left"></i></span></li>
+                <li v-if="has_prev"><a v-on:click="$emit('click-prev')" href="#0"><i class="uk-icon-angle-double-left"></i></a></li>
+                <li class="uk-active"><span v-text="page"></span></li>
+                <li v-if="! has_next" class="uk-disabled"><span><i class="uk-icon-angle-double-right"></i></span></li>
+                <li v-if="has_next"><a v-on:click="$emit('click-next')" href="#0"><i class="uk-icon-angle-double-right"></i></a></li>
+            </ul>
+        `
+    });
+
+    var vm = new Vue({
+        delimiters: ['{[', ']}'],
+        el: '#vm',
+        data: {
+            page: '',
+            pages: '',
+            has_prev: false,
+            has_next: false,
+            posts: []
+        },
+        created: function () {
+            $.ajax({
+                type: 'get',
+                url: '/api/posts?per_page=2',
+                dataType: 'json',
+                success: function (msg) {
+                    console.log("文章列表加载成功:");
+                    vm.has_prev = msg.has_prev;
+                    vm.has_next = msg.has_next;
+                    vm.page = msg.page;
+                    vm.posts = vm.posts.concat(msg.posts);
+                },
+                error: function (msg) {
+                    alert("文章加载失败");
+                }
+            });
+
+        },
+        methods: {
+            edit_post: function (post) {
+                location.assign('/manage/posts/edit/' + post.id);
+            },
+            delete_post: function (post) {
+                if(confirm('确认要删除“' + post.title + '”？删除后不可恢复！')){
+                    $.ajax({
+                        type: 'delete',
+                        url: '/api/posts/'+post.id,
+                        dataType: 'json',
+                        success: function (msg) {
+                            alert("文章删除成功");
+                        },
+                        error: function (msg) {
+                            alert("文章删除失败"+msg.message);
+                        }
+                    });
+                }
+            },
+            prev_page: function () {
+                this.page -= 1;
+                page = this.page;
+                $.ajax({
+                    type: 'get',
+                    url: '/api/posts?page='+page+'&'+'per_page=2',
+                    dataType: 'json',
+                    success: function (msg) {
+                        vm.has_prev = msg.has_prev;
+                        vm.has_next = msg.has_next;
+                        vm.page = msg.page;
+                        vm.posts = msg.posts;
+                        console.log("跳转到分页"+page);
+                    },
+                    error: function (msg) {
+                        console.log("文章加载失败11111");
+                        return -1;
+                    }
+                });
+            },
+            next_page: function () {
+                this.page += 1;
+                page = this.page;
+                $.ajax({
+                    type: 'get',
+                    url: '/api/posts?page='+page+'&'+'per_page=2',
+                    dataType: 'json',
+                    success: function (msg) {
+                        vm.has_prev = msg.has_prev;
+                        vm.has_next = msg.has_next;
+                        vm.page = msg.page;
+                        vm.posts = msg.posts;
+                        console.log("跳转到分页"+page);
+                    },
+                    error: function (msg) {
+                        console.log("文章加载失败222222");
+                    }
+                });
+            },
+        }
+    })
+</script>
+{% endblock %}

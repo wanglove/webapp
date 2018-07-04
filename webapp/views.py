@@ -1,5 +1,5 @@
 from webapp import app
-from flask import render_template, request, redirect, url_for, make_response
+from flask import render_template, request, redirect, url_for, make_response, abort
 from webapp.models import db, User, UserLoginContrl
 
 
@@ -25,7 +25,7 @@ def login_page():
     return render_template('login.html')
 
 
-# 登出
+# 登出,删除cookie
 @app.route('/logout')
 def logout():
 
@@ -53,7 +53,59 @@ def logout():
         return response
 
 
+# 重置密码页面
 @app.route('/resetpassword')
 def reset_password_page():
     return render_template('resetpassword.html')
 
+
+# 文章详情
+@app.route('/post/<string:post_id>')
+def show_post(post_id):
+    token = request.cookies.get('token')
+    user = None
+    if token:
+        user = User.verify_auth_token(token)
+
+    return render_template('post.html', user=user, post_id=post_id)
+
+
+# 新建 文章页面
+@app.route('/manage/posts/create')
+def new_post():
+    token = request.cookies.get('token')
+    if token is None:
+        abort(403)
+    user = User.verify_auth_token(token)
+    if user is None:
+        abort(403)
+
+    return render_template('manage_posts_edit.html', action='POST', user=user)
+
+
+# 修改 文章页面
+@app.route('/manage/posts/edit/<string:post_id>')
+def edit_post(post_id):
+    token = request.cookies.get('token')
+    if token is None:
+        abort(403)
+    user = User.verify_auth_token(token)
+    if user is None:
+        abort(403)
+    if post_id is None:
+        abort(401)
+
+    return render_template('manage_posts_edit.html', post_id=post_id, action='PUT', user=user)
+
+
+# 管理文章页面
+@app.route('/manage/posts')
+def manage_posts():
+    token = request.cookies.get('token')
+    if token is None:
+        abort(403)
+    user = User.verify_auth_token(token)
+    if user is None:
+        abort(403)
+
+    return render_template('manage_posts.html', user=user)
