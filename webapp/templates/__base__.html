@@ -12,7 +12,19 @@
     <script src="https://cdn.bootcss.com/marked/0.4.0/marked.js"></script>
     <script src="/static/js/uikit.min.js"></script>
     <script src="https://cdn.bootcss.com/vue/2.4.2/vue.min.js"></script>
+    <!--markdown编辑器依赖-->
+    <link href="https://cdn.bootcss.com/codemirror/5.38.0/codemirror.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/codemirror/5.38.0/codemirror.js"></script>
+    <script src="https://cdn.bootcss.com/codemirror/5.38.0/mode/markdown/markdown.js"></script>
+    <script src="https://cdn.bootcss.com/codemirror/5.38.0/addon/mode/overlay.js"></script>
+    <script src="https://cdn.bootcss.com/codemirror/5.38.0/mode/xml/xml.js"></script>
+    <script src="https://cdn.bootcss.com/codemirror/5.38.0/mode/gfm/gfm.js"></script>
     {% block beforehead %}<!-- before head  -->{% endblock %}
+    <style>
+        .uk-navbar {
+            background: #ffffff; !important;
+        }
+    </style>
 </head>
 <body>
     <nav class="uk-navbar uk-navbar-attached uk-margin-bottom">
@@ -38,7 +50,7 @@
         </div>
     </nav>
     <div class="uk-container uk-container-center">
-        <div class="uk-grid">
+        <div class="uk-grid uk-container-center" style="width: 960px">
             <!-- content -->
             {% block content %}
             {% endblock %}
