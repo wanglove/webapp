@@ -85,55 +85,50 @@ class Captcha(db.Model):
         else:
             return False
 
-class UserLoginContrl(db.Model):
-
-    __tablename__ = 'user_login_contrl'
-    id = db.Column(db.String(45), primary_key=True, comment='用户id')
-    username = db.Column(db.String(50), nullable=False, unique=True, comment='用户名(邮箱)')
-    token = db.Column(db.String(255), comment='用户token')
-    create_time = db.Column(db.DateTime, default=db.func.current_timestamp(), comment='登陆时间')
-
-    def __init__(self, id, username, token=None):
-        self.id = id
-        self.username = username
-        self.token = token
-
-    def verify_user_single_login(uid, token):
-        user_ctl = UserLoginContrl.query.get(uid)
-        if user_ctl:
-            if user_ctl.token == token:
-                return True
-        else:
-            return False
-
 
 class Post(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.String(45), primary_key=True, comment='文章id')
     userid = db.Column(db.String(50), comment='作者用户id')
-    username = db.Column(db.String(50), comment='作者用户名')
+    nickname = db.Column(db.String(50), comment='作者昵称')
     title = db.Column(db.String(50), comment='文章标题')
+    image = db.Column(db.String(256), comment='封面图片')
+    category = db.Column(db.String(50), comment='文章分类')
+    tags = db.Column(db.String(256), comment='文章标签')
     summary = db.Column(db.String(200), comment='文章摘要')
     content = db.Column(db.Text, comment='文章内容')
     create_time = db.Column(db.DateTime, default=db.func.current_timestamp(), comment='创建时间')
     update_time = db.Column(db.DateTime, default=db.func.current_timestamp(),
                             onupdate=db.func.current_timestamp(), comment='更新时间')
 
-    def __init__(self, userid, username, title, summary, content):
+    def __init__(self, userid, nickname, title, image, category, tags, summary, content):
         self.id = str(uuid4())
         self.userid = userid
-        self.username = username
+        self.nickname = nickname
         self.title = title
+        self.image = image
+        self.category = category
+        self.tags = tags
         self.summary = summary
         self.content = content
+
+
+class Category(db.Model):
+    __tablename__ = 'categories'
+    id = db.Column(db.String(45), primary_key=True, comment='分类id')
+    category = db.Column(db.String(50), nullable=False, unique=True, comment='分类名称')
+
+    def __init__(self, category):
+        self.id = str(uuid4())
+        self.category = category
 
 
 class Comment(db.Model):
     __tablename__='comments'
     id = db.Column(db.String(45), primary_key=True, comment='评论id')
-    blogid = db.Column(db.String(45), comment='文章id')
+    postid = db.Column(db.String(45), comment='文章id')
     userid = db.Column(db.String(50), comment='作者用户id')
-    username = db.Column(db.String(50), comment='作者用户名')
+    nickname = db.Column(db.String(50), comment='作者昵称')
     content = db.Column(db.Text, comment='评论内容')
     create_time = db.Column(db.DateTime, default=db.func.current_timestamp(), comment='创建时间')
     update_time = db.Column(db.DateTime, default=db.func.current_timestamp(),

@@ -1,6 +1,6 @@
 from webapp import app
 from flask import render_template, request, redirect, url_for, make_response, abort
-from webapp.models import db, User, UserLoginContrl
+from webapp.models import db, User
 
 
 # 主页
@@ -33,24 +33,7 @@ def logout():
     response = make_response(redirect(url_for('home_page')))
     response.set_cookie('token', 'deleted', max_age=0, path='/', domain='0.0.0.0', httponly=True)
 
-    # 从请求中拿出cookie
-    token = request.cookies.get('token')
-
-    if token is None:
-        return response
-
-    user = User.verify_auth_token(token)
-    if user is None:
-        return response
-
-    # 登出的token要与控制表里的一致,删除该用户登陆控制表中的数据
-    user_ctl = UserLoginContrl.query.get(user.id)
-    if user_ctl and user_ctl.token == token:
-        db.session.delete(user_ctl)
-        db.session.commit()
-        return response
-    else:
-        return response
+    return response
 
 
 # 重置密码页面

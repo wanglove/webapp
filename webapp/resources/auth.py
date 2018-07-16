@@ -1,7 +1,7 @@
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
 from flask_restful import Resource, reqparse
-from webapp.models import db, User, UserLoginContrl
+from webapp.models import User
 
 
 # 用户授权api
@@ -28,15 +28,6 @@ class AuthApi(Resource):
                 expires_in=current_app.config['TOKEN_EXPIRES_TIME'])
             new_token = serializer.dumps({'id': user.id}).decode()
 
-            # 用户登陆数据存入数据库，用来重复登陆控制
-            user_ctl = UserLoginContrl.query.filter_by(id=user.id).first()
-            if user_ctl:
-                db.session.delete(user_ctl)
-                db.session.commit()
-            new_user_ctl = UserLoginContrl(user.id, user.username, new_token)
-            db.session.add(new_user_ctl)
-            db.session.commit()
-
             return {'message': '登陆成功'}, 200, {'Set-Cookie': 'token=%s;Domain=0.0.0.0;Path=/;HttpOnly'%new_token}
         # 用户存在，密码输错
         else:
@@ -58,14 +49,5 @@ class AuthApi(Resource):
             return {'message': '用户授权无效或过期'}, 401, \
                    {'Set-Cookie': 'token=deleted;Domain=0.0.0.0;Path=/;Max-age=0;HttpOnly'}
 
-        # 登出的token要与控制表里的一致,删除该用户登陆控制表中的数据
-        user_ctl = UserLoginContrl.query.get(user.id)
-        if user_ctl and user_ctl.token == args.token:
-            db.session.delete(user_ctl)
-            db.session.commit()
-            return {'message': '用户登出成功'}, 204, \
-                   {'Set-Cookie': 'token=deleted;Domain=0.0.0.0;Path=/;Max-age=0;HttpOnly'}
-        else:
-            return {'message': '用户授权无效或过期'}, 401, \
-                   {'Set-Cookie': 'token=deleted;Domain=0.0.0.0;Path=/;Max-age=0;HttpOnly'}
-
+        return {'message': '用户登出成功'}, 204,\
+               {'Set-Cookie': 'token=deleted;Domain=0.0.0.0;Path=/;Max-age=0;HttpOnly'}

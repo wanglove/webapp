@@ -6,8 +6,11 @@ from webapp.models import db, User, Post
 post_data = {
     'id': fields.String,
     'userid': fields.String,
-    'username': fields.String,
+    'nickname': fields.String,
     'title': fields.String,
+    'image': fields.String,
+    'category': fields.String,
+    'tags': fields.String,
     'summary': fields.String,
     'content': fields.String,
     'create_time': fields.DateTime(dt_format='iso8601'),
@@ -30,7 +33,10 @@ class PostApi(Resource):
         self.parser.add_argument('page', type=int)
         self.parser.add_argument('per_page', type=int)
         self.parser.add_argument('title', type=str)
+        self.parser.add_argument('image', type=str)
+        self.parser.add_argument('category', type=str)
         self.parser.add_argument('summary', type=str)
+        self.parser.add_argument('tags', type=str)
         self.parser.add_argument('content', type=str)
         self.parser.add_argument('token', type=str, location='cookies')
 
@@ -75,8 +81,9 @@ class PostApi(Resource):
 
         args = self.parser.parse_args()
         # 校验参数必须填写
-        if args.title is None or args.summary is None or args.content is None:
-            abort(401)
+        if args.title is None or args.category is None\
+                or args.summary is None or args.content is None:
+            abort(400)
 
         # 校验用户身份 admin用户允许新增文章
         if args.token is None:
@@ -87,7 +94,8 @@ class PostApi(Resource):
         if user.username != '251319710@qq.com':
             abort(403)
 
-        new_post = Post(user.id, user.username, args.title, args.summary, args.content)
+        new_post = Post(user.id, user.nickname, args.title, args.image,
+                        args.category, args.tags, args.summary, args.content)
         db.session.add(new_post)
         db.session.commit()
 
@@ -96,8 +104,9 @@ class PostApi(Resource):
 
         args = self.parser.parse_args()
         # 校验参数必须填写
-        if args.title is None or args.summary is None or args.content is None:
-            abort(401)
+        if args.title is None or args.category is None\
+                or args.summary is None or args.content is None:
+            abort(400)
 
         # 校验用户身份 admin用户允许新增文章
         if args.token is None:
@@ -112,7 +121,10 @@ class PostApi(Resource):
         post = Post.query.get(post_id)
         if post:
             post.title = args.title
+            post.image = args.image
+            post.category = args.category
             post.summary = args.summary
+            post.tags = args.tags
             post.content = args.content
             db.session.commit()
             return {'message': '更新成功'}, 201
@@ -125,6 +137,6 @@ class PostApi(Resource):
         if post:
             db.session.delete(post)
             db.session.commit()
-            return {'message': '删除成功'}, 201
+            return {'message': '删除成功'}, 204
         else:
             abort(404)

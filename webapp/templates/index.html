@@ -4,27 +4,17 @@
 
 {% block content %}
     <div id="post" class="uk-width-medium-3-4">
-        <!--article class="uk-article" v-for="post in posts">
-            <h2><a v-bind:href="'/post/' + post.id">{[ post.title ]}</a></h2>
-            <p class="uk-article-meta">发表于{[ post.create_time ]}</p>
-            <p>{[ post.summary ]}</p>
-        </article-->
-        <div class="uk-grid" v-for="post in posts">
-            <div class="uk-width-3-5">
-                <div class="uk-panel">
-                    <h2><a v-bind:href="'/post/' + post.id">{[ post.title ]}</a></h2>
-                    <p>{[ post.summary ]}</p>
-                    <p class="uk-article-meta">发表于{[ post.create_time ]}</p>
-                </div>
+        <div class="uk-clearfix uk-vertical-align uk-margin-remove" v-for="post in posts">
+            <img class="uk-border-rounded uk-align-medium-left uk-vertical-align-middle uk-margin-small-bottom" v-bind:src="post.image" alt="封面" width="125" height="100">
+            <div class="uk-vertical-align-middle">
+                <h2><a v-bind:href="'/post/' + post.id">{[ post.title ]}</a></h2>
+                <p>{[ post.summary ]}</p>
+                <p class="uk-article-meta uk-margin-small-bottom">发表于{[ post.create_time ]}</p>
             </div>
-            <div class="uk-width-2-5">
-                <img src="/static/images/tu.jpg" alt="封面" width="125" height="100">
-            </div>
-            <hr class="uk-article-divider uk-width-1-1">
+            <hr class="uk-article-divider uk-margin-small">
         </div>
 
-        <!--hr class="uk-article-divider"-->
-        <div class="uk-container uk-container-center uk-text-center">
+        <div class="uk-container uk-text-center">
             <a v-if="has_next" v-on:click.prevent="read_more()" class="uk-text-large" type="button"><i class="uk-icon-arrow-down"></i>继续阅读...</a>
         </div>
     </div>
