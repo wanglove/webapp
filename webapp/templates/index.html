@@ -16,7 +16,7 @@
     </div>
 
     <!--中间内容区域-->
-    <div id="post" class="uk-width" style="width: 635px">
+    <div class="uk-width" style="width: 635px">
 
         <div id="demo" class="carousel slide" data-ride="carousel">
               <!-- 指示符 -->
@@ -46,7 +46,7 @@
             <div class="uk-vertical-align-middle">
                 <h4><a v-bind:href="'/post/' + post.id">{[ post.title ]}</a></h4>
                 <p>{[ post.summary ]}</p>
-                <p class="uk-article-meta uk-margin-small-bottom"><i class="uk-icon-user"></i>&nbsp;{[ post.nickname ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-calendar"></i>&nbsp;{[ post.create_time.substr(0,10) ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-eye"></i>&nbsp;3</p>
+                <p class="uk-article-meta uk-margin-small-bottom"><i class="uk-icon-user"></i>&nbsp;{[ post.nickname ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-calendar"></i>&nbsp;{[ post.create_time.substr(0,10) ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-eye"></i>&nbsp;{[ post.page_view ]}</p>
             </div>
             <hr class="uk-article-divider uk-margin-small">
         </div>
@@ -88,7 +88,7 @@
 <script>
     var vm = new Vue({
         delimiters: ['{[', ']}'],
-        el: '#post',
+        el: '#vm',
         data: {
             page: '',
             pages: '',

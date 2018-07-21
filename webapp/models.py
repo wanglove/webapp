@@ -97,6 +97,7 @@ class Post(db.Model):
     tags = db.Column(db.String(256), comment='文章标签')
     summary = db.Column(db.String(200), comment='文章摘要')
     content = db.Column(db.Text, comment='文章内容')
+    page_view = db.Column(db.Integer, default=0, comment='文章浏览数')
     create_time = db.Column(db.DateTime, default=db.func.current_timestamp(), comment='创建时间')
     update_time = db.Column(db.DateTime, default=db.func.current_timestamp(),
                             onupdate=db.func.current_timestamp(), comment='更新时间')

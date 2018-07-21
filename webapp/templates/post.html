@@ -3,10 +3,10 @@
 {% block title %}文章加载中...{% endblock %}
 
 {% block content %}
-    <div id="post" class="uk-width-medium-3-4 uk-container-center">
+    <div class="uk-width-medium-3-4 uk-container-center">
         <article class="uk-article">
             <h1 class="uk-article-title">{[ post.title ]}</h1>
-            <p class="uk-article-meta uk-margin-small"><i class="uk-icon-user"></i>&nbsp;{[ post.nickname ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-calendar"></i>&nbsp;{[ post.create_time.substr(0,10) ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-eye"></i>&nbsp;3</p>
+            <p class="uk-article-meta uk-margin-small"><i class="uk-icon-user"></i>&nbsp;{[ post.nickname ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-calendar"></i>&nbsp;{[ post.create_time.substr(0,10) ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-eye"></i>&nbsp;{[ post.page_view ]}</p>
             <hr class="uk-article-divider uk-margin-small">
             <p><span v-html="post.content"></span></p>
         </article>
@@ -18,12 +18,13 @@
     post_url='/api/posts/{{ post_id }}';
     var vm = new Vue({
         delimiters: ['{[', ']}'],
-        el: '#post',
+        el: '#vm',
         data: {
             post: {
                 title: '',
                 nickname: '',
                 create_time: '',
+                page_view: '',
                 content: ''
             }
         },
@@ -37,6 +38,7 @@
                     vm.post.title = msg.posts[0].title;
                     vm.post.nickname = msg.posts[0].nickname;
                     vm.post.create_time = msg.posts[0].create_time;
+                    vm.post.page_view = msg.posts[0].page_view;
                     vm.post.content = marked(msg.posts[0].content);
                     $('title').html(vm.post.title)   //设置网页标题
                 },

@@ -13,6 +13,7 @@ post_data = {
     'tags': fields.String,
     'summary': fields.String,
     'content': fields.String,
+    'page_view': fields.Integer,
     'create_time': fields.DateTime(dt_format='iso8601'),
     'update_time': fields.DateTime(dt_format='iso8601')
 }
@@ -64,7 +65,7 @@ class PostApi(Resource):
             else:
                 per_page = current_app.config['POSTS_PER_PAGE']
 
-            pagination = Post.query.order_by(Post.update_time.desc()).\
+            pagination = Post.query.order_by(Post.create_time.desc()).\
                 paginate(page, per_page=per_page, error_out=False)
 
             posts = pagination.items     # 分页内容
