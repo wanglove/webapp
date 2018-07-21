@@ -3,25 +3,72 @@
 {% block title %}首页{% endblock %}
 
 {% block content %}
-    <div id="post" class="uk-width-medium-3-4">
+    <!--左侧导航-->
+    <div class="uk-width" style="width: 106px;">
+        <div class="uk-panel uk-panel-box uk-panel-box-secondary">
+            <ul class="uk-nav uk-nav-side uk-text-center">
+                <li class="uk-active"><a href="#">推荐</a></li>
+                <li><a href="#">资讯</a></li>
+                <li><a href="#">最新文章</a></li>
+                <li><a href="#">自动化测试</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!--中间内容区域-->
+    <div id="post" class="uk-width" style="width: 635px">
+
+        <div id="demo" class="carousel slide" data-ride="carousel">
+              <!-- 指示符 -->
+              <ul class="carousel-indicators">
+                  <li data-target="#demo" data-slide-to="0" class="active"></li>
+                  <li data-target="#demo" data-slide-to="1"></li>
+                  <li data-target="#demo" data-slide-to="2"></li>
+              </ul>
+              <!-- 轮播图片 -->
+              <div class="carousel-inner rounded">
+                  <div class="carousel-item active">
+                      <img src="http://static.runoob.com/images/mix/img_fjords_wide.jpg">
+                  </div>
+                  <div class="carousel-item">
+                      <img src="http://static.runoob.com/images/mix/img_nature_wide.jpg">
+                  </div>
+                  <div class="carousel-item">
+                      <img src="http://static.runoob.com/images/mix/img_mountains_wide.jpg">
+                  </div>
+              </div>
+        </div>
+
+        <hr class="uk-article-divider uk-margin-small">
+        <!--文章列表-->
         <div class="uk-clearfix uk-vertical-align uk-margin-remove" v-for="post in posts">
-            <img class="uk-border-rounded uk-align-medium-left uk-vertical-align-middle uk-margin-small-bottom" v-bind:src="post.image" alt="封面" width="125" height="100">
+            <img class="uk-border-rounded uk-align-medium-left uk-vertical-align-middle uk-margin-small-bottom" v-bind:src="post.image" alt="封面图片" width="120" height="90">
             <div class="uk-vertical-align-middle">
-                <h2><a v-bind:href="'/post/' + post.id">{[ post.title ]}</a></h2>
+                <h4><a v-bind:href="'/post/' + post.id">{[ post.title ]}</a></h4>
                 <p>{[ post.summary ]}</p>
-                <p class="uk-article-meta uk-margin-small-bottom">发表于{[ post.create_time ]}</p>
+                <p class="uk-article-meta uk-margin-small-bottom"><i class="uk-icon-user"></i>&nbsp;{[ post.nickname ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-calendar"></i>&nbsp;{[ post.create_time.substr(0,10) ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-eye"></i>&nbsp;3</p>
             </div>
             <hr class="uk-article-divider uk-margin-small">
         </div>
-
+        <!--继续阅读-->
         <div class="uk-container uk-text-center">
             <a v-if="has_next" v-on:click.prevent="read_more()" class="uk-text-large" type="button"><i class="uk-icon-arrow-down"></i>继续阅读...</a>
         </div>
     </div>
 
-    <div class="uk-width-medium-1-4">
+    <!--右侧区域-->
+    <div class="uk-width" style="width: 290px">
+        <!--7日精选-->
+        <div class="uk-margin-small">
+            <img src="/static/images/7day.png" class="rounded">
+        </div>
+        <!--30日精选-->
+        <div class="uk-margin-small">
+            <img src="/static/images/30day.png" class="rounded">
+        </div>
+        <!--热门文章-->
         <div class="uk-panel uk-panel-header">
-            <h3 class="uk-panel-title"><i class="uk-icon-star"></i> 推荐阅读</h3>
+            <h3 class="uk-panel-title"><i class="uk-icon-fire"></i>  热门文章</h3>
             <ul class="uk-list uk-list-line">
                 <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">编程</a></li>
                 <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">读书</a></li>
@@ -29,7 +76,8 @@
                 <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">Git教程</a></li>
             </ul>
         </div>
-        <div class="uk-panel uk-panel-header">
+        <!--站点说明-->
+        <div class="uk-panel uk-panel-header uk-margin-top">
             <h3 class="uk-panel-title"><i class="uk-icon-bookmark"></i> 站点说明</h3>
             <p>本站提供免费的软件测试相关教程和视频,欢迎大家学习和交流！</p>
         </div>
@@ -50,7 +98,7 @@
         created: function () {
             $.ajax({
                 type: 'get',
-                url: '/api/posts?per_page=2',
+                url: '/api/posts?per_page=20',
                 dataType: 'json',
                 success: function (msg) {
                     console.log("文章加载成功:");
