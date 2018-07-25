@@ -4,9 +4,10 @@ from webapp.models import db, User, Post
 
 
 post_data = {
-    'id': fields.String,
+    'id': fields.Integer,
     'userid': fields.String,
     'nickname': fields.String,
+    'post_type': fields.String,
     'title': fields.String,
     'image': fields.String,
     'category': fields.String,
@@ -33,6 +34,7 @@ class PostApi(Resource):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('page', type=int)
         self.parser.add_argument('per_page', type=int)
+        self.parser.add_argument('post_type', type=str)
         self.parser.add_argument('title', type=str)
         self.parser.add_argument('image', type=str)
         self.parser.add_argument('category', type=str)
@@ -50,29 +52,61 @@ class PostApi(Resource):
                 return {'posts': post}, 200
             else:
                 abort(404)
-        # 分页查询
+        # 按分类分页查询
         else:
 
             args = self.parser.parse_args()
 
+            # 设置要查询的文章类型
+            post_type = ''
+            if args.post_type is not None:
+                post_type = args.post_type
+
+            # 设置查询分类
+            category = ''
+            if args.category is not None:
+                category = args.category
+
             # 设置查询的分页,默认分页是1
             page = 1
-            if args.page is not None and args.page > 0:
-                page = args.page
-            # 设置每页显示多少条数据
-            if args.per_page is not None and args.per_page > 0:
-                per_page = args.per_page
-            else:
-                per_page = current_app.config['POSTS_PER_PAGE']
+            if args.page is not None:
+                if args.page > 0:
+                    page = args.page
 
-            pagination = Post.query.order_by(Post.create_time.desc()).\
-                paginate(page, per_page=per_page, error_out=False)
+            # 设置每页显示多少条数据,每页面最多显示20条数据
+            per_page = current_app.config['POSTS_PER_PAGE']
+            if args.per_page is not None:
+                if args.per_page > 0 and args.per_page <= 20:
+                    per_page = args.per_page
+
+            # 查询所有的文章,按时间倒序查询
+            if category == '' and post_type == '':
+                pagination = Post.query.order_by(Post.create_time.desc()). \
+                    paginate(page, per_page=per_page, error_out=False)
+            # 按分类倒序查询
+            elif category != '' and post_type == '':
+                pagination = Post.query.filter_by(category=category).order_by(Post.create_time.desc()). \
+                    paginate(page, per_page=per_page, error_out=False)
+            # 按文章类型倒序查询
+            elif category == '' and post_type != '':
+                pagination = Post.query.filter_by(post_type=post_type).order_by(Post.create_time.desc()). \
+                    paginate(page, per_page=per_page, error_out=False)
+            # 按类型和分类查询,倒序输出
+            elif category != '' and post_type != '':
+                pagination = Post.query.filter_by(category=category, post_type=post_type)\
+                    .order_by(Post.create_time.desc()).paginate(page, per_page=per_page, error_out=False)
+            else:
+                abort(400)
 
             posts = pagination.items     # 分页内容
             page = pagination.page       # 当前分页数
             pages = pagination.pages     # 总分页数
             has_prev = pagination.has_prev   # 是否有上一页
             has_next = pagination.has_next   # 是否有下一页
+
+            # 去除post中的content,减少网络流量
+            for post in posts:
+                post.content = ''
 
             return {'page': page, 'pages': pages, 'has_prev': has_prev,
                     'has_next': has_next, 'posts': posts}, 200
@@ -86,6 +120,12 @@ class PostApi(Resource):
                 or args.summary is None or args.content is None:
             abort(400)
 
+        # 文章类型,1是普通文章,2是视频
+        if args.post_type is None:
+            post_type = '1'
+        else:
+            post_type = args.post_type
+
         # 校验用户身份 admin用户允许新增文章
         if args.token is None:
             abort(403)
@@ -95,7 +135,7 @@ class PostApi(Resource):
         if user.username != '251319710@qq.com':
             abort(403)
 
-        new_post = Post(user.id, user.nickname, args.title, args.image,
+        new_post = Post(user.id, user.nickname, post_type, args.title, args.image,
                         args.category, args.tags, args.summary, args.content)
         db.session.add(new_post)
         db.session.commit()
@@ -105,7 +145,7 @@ class PostApi(Resource):
 
         args = self.parser.parse_args()
         # 校验参数必须填写
-        if args.title is None or args.category is None\
+        if args.post_type is None or args.title is None or args.category is None\
                 or args.summary is None or args.content is None:
             abort(400)
 
@@ -121,6 +161,7 @@ class PostApi(Resource):
         # 根据文章id找出文章，然后修改
         post = Post.query.get(post_id)
         if post:
+            post.post_type = args.post_type
             post.title = args.title
             post.image = args.image
             post.category = args.category

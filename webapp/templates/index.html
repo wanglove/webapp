@@ -5,20 +5,29 @@
 {% block content %}
     <!--左侧导航-->
     <div class="uk-width" style="width: 106px;">
-        <div class="uk-panel uk-panel-box uk-panel-box-secondary">
+        <!--div class="uk-panel uk-panel-box uk-panel-box-secondary">
             <ul class="uk-nav uk-nav-side uk-text-center">
-                <li class="uk-active"><a href="#">推荐</a></li>
+                <li class="uk-active"><a href="/">推荐</a></li>
                 <li><a href="#">资讯</a></li>
                 <li><a href="#">最新文章</a></li>
                 <li><a href="#">自动化测试</a></li>
             </ul>
+        </div-->
+        <div class="list-group text-center" id="list-tab" role="tablist">
+            <a class="list-group-item list-group-item-action active p-2" data-toggle="list" href="#">最新文章</a>
+            <a class="list-group-item list-group-item-action p-2" data-toggle="list" href="#">行业动态</a>
+            <a class="list-group-item list-group-item-action p-2" data-toggle="list" href="#">测试基础</a>
+            <a class="list-group-item list-group-item-action p-2" data-toggle="list" href="#">接口测试</a>
+            <a class="list-group-item list-group-item-action p-2" data-toggle="list" href="#">自动化测试</a>
+            <a class="list-group-item list-group-item-action p-2" data-toggle="list" href="#">性能测试</a>
+            <a class="list-group-item list-group-item-action p-2" data-toggle="list" href="#">安全测试</a>
         </div>
     </div>
 
     <!--中间内容区域-->
     <div class="uk-width" style="width: 635px">
 
-        <div id="demo" class="carousel slide" data-ride="carousel">
+        <div id="pic" class="carousel slide" data-ride="carousel">
               <!-- 指示符 -->
               <ul class="carousel-indicators">
                   <li data-target="#demo" data-slide-to="0" class="active"></li>
@@ -118,7 +127,7 @@
                 page = this.page;
                 $.ajax({
                     type: 'get',
-                    url: '/api/posts?page='+page+'&'+'per_page=2',
+                    url: '/api/posts?page='+page+'&'+'per_page=20',
                     dataType: 'json',
                     success: function (msg) {
                         vm.has_next = msg.has_next;
@@ -131,6 +140,32 @@
                         return -1;
                     }
                 });
+            },
+            list_posts: function (category) {
+                var post_urt = '';
+                if(category === 'all')
+                {
+                    post_urt = '/api/posts?per_page=20'
+                }
+                else
+                {
+                    post_urt = '/api/posts?per_page=20'
+                }
+                $.ajax({
+                    type: 'get',
+                    url: '/api/posts?per_page=20',
+                    dataType: 'json',
+                    success: function (msg) {
+                        console.log("文章加载成功:");
+                        vm.page = msg.page;
+                        vm.has_next = msg.has_next;
+                        vm.posts = vm.posts.concat(msg.posts);
+                    },
+                    error: function (msg) {
+                        alert("文章加载失败");
+                    }
+                });
+
             }
         }
     })

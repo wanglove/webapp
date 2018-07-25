@@ -88,12 +88,13 @@ class Captcha(db.Model):
 
 class Post(db.Model):
     __tablename__ = 'posts'
-    id = db.Column(db.String(45), primary_key=True, comment='文章id')
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='文章id')
     userid = db.Column(db.String(50), comment='作者用户id')
     nickname = db.Column(db.String(50), comment='作者昵称')
+    post_type = db.Column(db.String(1), default='1', comment='文章类型,1=文章,2=视频')
     title = db.Column(db.String(50), comment='文章标题')
     image = db.Column(db.String(256), comment='封面图片')
-    category = db.Column(db.String(50), comment='文章分类')
+    category = db.Column(db.String(50), nullable=False, comment='文章分类')
     tags = db.Column(db.String(256), comment='文章标签')
     summary = db.Column(db.String(200), comment='文章摘要')
     content = db.Column(db.Text, comment='文章内容')
@@ -102,10 +103,10 @@ class Post(db.Model):
     update_time = db.Column(db.DateTime, default=db.func.current_timestamp(),
                             onupdate=db.func.current_timestamp(), comment='更新时间')
 
-    def __init__(self, userid, nickname, title, image, category, tags, summary, content):
-        self.id = str(uuid4())
+    def __init__(self, userid, nickname, post_type, title, image, category, tags, summary, content):
         self.userid = userid
         self.nickname = nickname
+        self.post_type = post_type
         self.title = title
         self.image = image
         self.category = category
@@ -116,17 +117,16 @@ class Post(db.Model):
 
 class Category(db.Model):
     __tablename__ = 'categories'
-    id = db.Column(db.String(45), primary_key=True, comment='分类id')
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='分类id')
     category = db.Column(db.String(50), nullable=False, unique=True, comment='分类名称')
 
     def __init__(self, category):
-        self.id = str(uuid4())
         self.category = category
 
 
 class Comment(db.Model):
     __tablename__='comments'
-    id = db.Column(db.String(45), primary_key=True, comment='评论id')
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='评论id')
     postid = db.Column(db.String(45), comment='文章id')
     userid = db.Column(db.String(50), comment='作者用户id')
     nickname = db.Column(db.String(50), comment='作者昵称')
