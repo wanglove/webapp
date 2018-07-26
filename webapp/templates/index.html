@@ -5,29 +5,15 @@
 {% block content %}
     <!--左侧导航-->
     <div class="uk-width" style="width: 106px;">
-        <!--div class="uk-panel uk-panel-box uk-panel-box-secondary">
-            <ul class="uk-nav uk-nav-side uk-text-center">
-                <li class="uk-active"><a href="/">推荐</a></li>
-                <li><a href="#">资讯</a></li>
-                <li><a href="#">最新文章</a></li>
-                <li><a href="#">自动化测试</a></li>
-            </ul>
-        </div-->
         <div class="list-group text-center" id="list-tab" role="tablist">
-            <a class="list-group-item list-group-item-action active p-2" data-toggle="list" href="#">最新文章</a>
-            <a class="list-group-item list-group-item-action p-2" data-toggle="list" href="#">行业动态</a>
-            <a class="list-group-item list-group-item-action p-2" data-toggle="list" href="#">测试基础</a>
-            <a class="list-group-item list-group-item-action p-2" data-toggle="list" href="#">接口测试</a>
-            <a class="list-group-item list-group-item-action p-2" data-toggle="list" href="#">自动化测试</a>
-            <a class="list-group-item list-group-item-action p-2" data-toggle="list" href="#">性能测试</a>
-            <a class="list-group-item list-group-item-action p-2" data-toggle="list" href="#">安全测试</a>
+            <a v-on:click.prevent="list_posts(category)" v-bind:id="category.category" class="list-group-item list-group-item-action p-2" data-toggle="list" href="#0" v-for="category in categories">{[ category.category ]}</a>
         </div>
     </div>
 
     <!--中间内容区域-->
     <div class="uk-width" style="width: 635px">
 
-        <div id="pic" class="carousel slide" data-ride="carousel">
+        <div id="demo" class="carousel slide" data-ride="carousel">
               <!-- 指示符 -->
               <ul class="carousel-indicators">
                   <li data-target="#demo" data-slide-to="0" class="active"></li>
@@ -37,7 +23,7 @@
               <!-- 轮播图片 -->
               <div class="carousel-inner rounded">
                   <div class="carousel-item active">
-                      <img src="http://static.runoob.com/images/mix/img_fjords_wide.jpg">
+                      <a href="http://www.baidu.com"><img src="http://static.runoob.com/images/mix/img_fjords_wide.jpg"></a>
                   </div>
                   <div class="carousel-item">
                       <img src="http://static.runoob.com/images/mix/img_nature_wide.jpg">
@@ -102,32 +88,51 @@
             page: '',
             pages: '',
             has_next: false,
+            categories: [],
+            post_type: '1',
+            current_posts_category: '',
             posts: []
         },
         created: function () {
+            //加载最新文章列表
             $.ajax({
                 type: 'get',
-                url: '/api/posts?per_page=20',
+                url: '/api/posts?post_type=1',
                 dataType: 'json',
                 success: function (msg) {
-                    console.log("文章加载成功:");
+                    console.log("文章列表加载成功:");
                     vm.page = msg.page;
                     vm.has_next = msg.has_next;
-                    vm.posts = vm.posts.concat(msg.posts);
+                    vm.posts = msg.posts;
                 },
                 error: function (msg) {
-                    alert("文章加载失败");
+                    console.log("文章列表加载失败");
                 }
             });
+            //获取文章分类信息
+            $.ajax({
+                type: 'get',
+                url: 'api/posts/categories',
+                dataType: 'json',
+                success: function (msg) {
+                    console.log("文章分类信息加载成功:");
+                    vm.categories = msg.categories;
+                },
+                error: function (msg) {
+                    console.log("文章分类信息加载失败");
+                }
+            });
+            //插入最新文章到list-tab开头
+            $('#list-tab').prepend('<a onclick="location=\'/\'" class="list-group-item list-group-item-action p-2 active show" data-toggle="list" href="/">最新文章</a>');
 
         },
         methods: {
             read_more: function () {
                 this.page += 1;
-                page = this.page;
+                var page = this.page;
                 $.ajax({
                     type: 'get',
-                    url: '/api/posts?page='+page+'&'+'per_page=20',
+                    url: '/api/posts?page='+page+'&'+'per_page=20'+'&post_type='+vm.post_type+'&'+'category='+vm.current_posts_category,
                     dataType: 'json',
                     success: function (msg) {
                         vm.has_next = msg.has_next;
@@ -142,27 +147,19 @@
                 });
             },
             list_posts: function (category) {
-                var post_urt = '';
-                if(category === 'all')
-                {
-                    post_urt = '/api/posts?per_page=20'
-                }
-                else
-                {
-                    post_urt = '/api/posts?per_page=20'
-                }
+                vm.current_posts_category = category.category;
                 $.ajax({
                     type: 'get',
-                    url: '/api/posts?per_page=20',
+                    url: '/api/posts?post_type='+vm.post_type+'&'+'category='+vm.current_posts_category,
                     dataType: 'json',
                     success: function (msg) {
-                        console.log("文章加载成功:");
+                        console.log("文章列表加载成功:");
                         vm.page = msg.page;
                         vm.has_next = msg.has_next;
-                        vm.posts = vm.posts.concat(msg.posts);
+                        vm.posts = msg.posts;
                     },
                     error: function (msg) {
-                        alert("文章加载失败");
+                        console.log("文章列表加载失败");
                     }
                 });
 

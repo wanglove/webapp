@@ -5,6 +5,7 @@ from webapp.resources.users import UsersApi
 from webapp.resources.auth import AuthApi
 from webapp.resources.captchas import CaptchaApi
 from webapp.resources.posts import PostApi
+from webapp.resources.categories import CategoryApi
 from webapp.emails import mail
 
 
@@ -32,6 +33,7 @@ restful_api.add_resource(UsersApi, '/api/users')
 restful_api.add_resource(AuthApi, '/api/authenticate')
 restful_api.add_resource(CaptchaApi, '/api/captchas')
 restful_api.add_resource(PostApi, '/api/posts', '/api/posts/<string:post_id>')
+restful_api.add_resource(CategoryApi, '/api/posts/categories')
 restful_api.init_app(app)
 
 import webapp.views
