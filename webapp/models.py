@@ -124,10 +124,20 @@ class Category(db.Model):
         self.category = category
 
 
+class Carousel(db.Model):
+    __tablename__ = 'carousels'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='id')
+    postid = db.Column(db.Integer, comment='文章id')
+    position = db.Column(db.String(1), default='1', comment='轮播图片展示位置,1=首页')
+    title = db.Column(db.String(50), comment='文章标题')
+    image = db.Column(db.String(256), comment='封面图片')
+    summary = db.Column(db.String(200), comment='文章摘要')
+
+
 class Comment(db.Model):
     __tablename__='comments'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='评论id')
-    postid = db.Column(db.String(45), comment='文章id')
+    postid = db.Column(db.Integer, comment='文章id')
     userid = db.Column(db.String(50), comment='作者用户id')
     nickname = db.Column(db.String(50), comment='作者昵称')
     content = db.Column(db.Text, comment='评论内容')
