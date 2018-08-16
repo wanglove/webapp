@@ -1,0 +1,127 @@
+{% extends '__base__.html' %}
+
+{% block title %}视频{% endblock %}
+
+{% block content %}
+
+    <!--视频汇总页面-->
+    <div class="uk-width-1-1">
+        <ul id="videos" class="uk-subnav uk-subnav-pill uk-margin-small">
+            <li data-uk-filter class="uk-active"><a href="javascript:void(0)" onclick="location='/videos'">所有视频</a></li>
+            <li v-bind:data-uk-filter="category.category" v-for="category in categories"><a v-on:click.prevent="list_posts(category)" href="javascript:void(0)">{[ category.category ]}</a></li>
+        </ul>
+
+        <hr class="uk-article-divider uk-margin-small">
+
+        <div data-uk-grid="{gutter: 20, controls: '#videos'}" class="uk-grid-width-small-1-2 uk-grid-width-medium-1-3 uk-grid-width-large-1-4 tm-grid-heights">
+            <div v-bind:data-uk-filter="post.category" v-for="post in posts">
+                <a class="uk-thumbnail" v-bind:href="'/post/' + post.id">
+                    <img v-bind:src="post.image" alt="封面图片">
+                    <div class="uk-thumbnail-caption">{[ post.title ]}</div>
+                </a>
+            </div>
+            <!--
+            <div data-uk-filter="性能测试">
+                <a class="uk-thumbnail" href="#">
+                    <img src="/static/images/placeholder_600x400.svg" alt="">
+                    <div class="uk-thumbnail-caption">A1</div>
+                </a>
+            </div>
+            -->
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block vuejs %}
+<script>
+    var vm = new Vue({
+        delimiters: ['{[', ']}'],
+        el: '#vm',
+        data: {
+            page: '',
+            pages: '',
+            has_next: false,
+            categories: [],
+            post_type: '2',
+            current_posts_category: '',  //当前页面分类
+            posts: []
+        },
+        created: function () {
+            //加载视频列表
+            $.ajax({
+                type: 'get',
+                url: '/api/posts?post_type=2',
+                dataType: 'json',
+                success: function (msg) {
+                    console.log("视频列表加载成功");
+                    vm.page = msg.page;
+                    vm.has_next = msg.has_next;
+                    vm.posts = msg.posts;
+                },
+                error: function (msg) {
+                    console.log("视频列表加载失败");
+                }
+            });
+            //获取文章分类信息
+            $.ajax({
+                type: 'get',
+                url: '/api/posts/categories',
+                dataType: 'json',
+                success: function (msg) {
+                    console.log("文章分类信息加载成功");
+                    //vm.categories = msg.categories;
+                    //加载post_type=2的分类信息
+                    for (x in msg.categories) {
+                        if (msg.categories[x].type.substr(1,1) === '1') {
+                            vm.categories = vm.categories.concat(msg.categories[x]);
+                        }
+                    }
+                },
+                error: function (msg) {
+                    console.log("文章分类信息加载失败");
+                }
+            });
+        },
+        methods: {
+            read_more: function () {
+                this.page += 1;
+                var page = this.page;
+                $.ajax({
+                    type: 'get',
+                    url: '/api/posts?page='+page+'&'+'per_page=20'+'&post_type='+vm.post_type+'&'+'category='+vm.current_posts_category,
+                    dataType: 'json',
+                    success: function (msg) {
+                        vm.has_next = msg.has_next;
+                        vm.page = msg.page;
+                        vm.posts = vm.posts.concat(msg.posts);
+                        console.log("继续阅读,文章加载成功");
+                    },
+                    error: function (msg) {
+                        console.log("继续阅读,文章加载失败");
+                        return -1;
+                    }
+                });
+            },
+            list_posts: function (category) {
+                vm.current_posts_category = category.category;
+                $.ajax({
+                    type: 'get',
+                    url: '/api/posts?post_type='+vm.post_type+'&'+'category='+vm.current_posts_category,
+                    dataType: 'json',
+                    success: function (msg) {
+                        console.log("文章列表加载成功");
+                        vm.page = msg.page;
+                        vm.has_next = msg.has_next;
+                        vm.posts = msg.posts;
+                    },
+                    error: function (msg) {
+                        console.log("文章列表加载失败");
+                    }
+                });
+
+            }
+        }
+    })
+</script>
+{% endblock %}

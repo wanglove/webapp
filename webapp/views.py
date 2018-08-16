@@ -13,6 +13,26 @@ def home_page():
     return render_template('index.html', user=user)
 
 
+# 视频汇总页面
+@app.route('/videos')
+def videos_page():
+    token = request.cookies.get('token')
+    user = None
+    if token:
+        user = User.verify_auth_token(token)
+    return render_template('videos.html', user=user)
+
+
+# 企业内推页面
+@app.route('/jobs')
+def jobs_page():
+    token = request.cookies.get('token')
+    user = None
+    if token:
+        user = User.verify_auth_token(token)
+    return render_template('jobs.html', user=user)
+
+
 # 注册页面
 @app.route('/register')
 def reg_page():
@@ -31,7 +51,7 @@ def logout():
 
     # 设置http响应报文，删除cookie
     response = make_response(redirect(url_for('home_page')))
-    response.set_cookie('token', 'deleted', max_age=0, path='/', domain='0.0.0.0', httponly=True)
+    response.set_cookie('token', 'deleted', max_age=0, path='/', httponly=True)
 
     return response
 

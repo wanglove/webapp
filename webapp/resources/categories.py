@@ -4,7 +4,8 @@ from webapp.models import Category
 
 category_data = {
     'id': fields.Integer,
-    'category': fields.String
+    'category': fields.String,
+    'type': fields.String
 }
 
 category_fields = {

@@ -28,7 +28,7 @@ class AuthApi(Resource):
                 expires_in=current_app.config['TOKEN_EXPIRES_TIME'])
             new_token = serializer.dumps({'id': user.id}).decode()
 
-            return {'message': '登陆成功'}, 200, {'Set-Cookie': 'token=%s;Domain=0.0.0.0;Path=/;HttpOnly'%new_token}
+            return {'message': '登陆成功'}, 200, {'Set-Cookie': 'token=%s;Path=/;HttpOnly'%new_token}
         # 用户存在，密码输错
         else:
             return {'message': '用户名或密码错误'}, 401
@@ -47,7 +47,7 @@ class AuthApi(Resource):
         user = User.verify_auth_token(args.token)
         if user is None:
             return {'message': '用户授权无效或过期'}, 401, \
-                   {'Set-Cookie': 'token=deleted;Domain=0.0.0.0;Path=/;Max-age=0;HttpOnly'}
+                   {'Set-Cookie': 'token=deleted;Path=/;Max-age=0;HttpOnly'}
 
         return {'message': '用户登出成功'}, 204,\
-               {'Set-Cookie': 'token=deleted;Domain=0.0.0.0;Path=/;Max-age=0;HttpOnly'}
+               {'Set-Cookie': 'token=deleted;Path=/;Max-age=0;HttpOnly'}

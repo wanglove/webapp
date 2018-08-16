@@ -119,9 +119,11 @@ class Category(db.Model):
     __tablename__ = 'categories'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='分类id')
     category = db.Column(db.String(50), nullable=False, unique=True, comment='分类名称')
+    type = db.Column(db.String(5), default='00000', comment='分类类型')
 
-    def __init__(self, category):
+    def __init__(self, category, type):
         self.category = category
+        self.type = type
 
 
 class Carousel(db.Model):

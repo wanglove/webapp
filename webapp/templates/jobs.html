@@ -1,43 +1,24 @@
 {% extends '__base__.html' %}
 
-{% block title %}首页{% endblock %}
+{% block title %}企业内推{% endblock %}
 
 {% block content %}
-    <!--左侧导航-->
-    <div class="uk-width" style="width: 106px;">
-        <div class="list-group text-center" id="list-tab" role="tablist">
-            <a v-on:click.prevent="list_posts(category)" v-bind:id="category.category" class="list-group-item list-group-item-action p-2" data-toggle="list" href="javascript:void(0)" v-for="category in categories">{[ category.category ]}</a>
-        </div>
-    </div>
-
-    <!--中间内容区域-->
-    <div class="uk-width" style="width: 635px">
-
-        <div id="demo" class="carousel slide" data-ride="carousel">
-
-          <!-- 轮播图片 -->
-          <div class="carousel-inner rounded">
-            <div v-bind:id="'carousel' + carousel.id" class="carousel-item" v-for="carousel in carousels">
-                <a v-bind:href="'/post/' + carousel.postid"><img v-bind:src="carousel.image"></a>
-                <div class="carousel-caption d-none d-md-block">
-                    <!--h5>第一张图片</h5-->
-                    <p>{[ carousel.summary ]}</p>
-                </div>
-            </div>
-          </div>
-
-          <!-- 左右切换按钮 -->
-          <a class="carousel-control-prev" href="#demo" data-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-          </a>
-          <a class="carousel-control-next" href="#demo" data-slide="next">
-            <span class="carousel-control-next-icon"></span>
-          </a>
-
-        </div>
+    <div class="uk-width" style="width: 741px">
+        <img src="/static/images/job.jpg" class="rounded">
+        <!--职位分类导航-->
+        <ul id="jobs" class="uk-subnav uk-subnav-pill uk-margin-small">
+            <li data-uk-filter class="uk-active"><a href="javascript:void(0)" onclick="location='/jobs'">所有职位</a></li>
+            <li v-bind:data-uk-filter="category.category" v-for="category in categories"><a v-on:click.prevent="list_posts(category)" href="javascript:void(0)">{[ category.category ]}</a></li>
+        </ul>
 
         <hr class="uk-article-divider uk-margin-small">
-        <!--文章列表-->
+
+        <div data-uk-grid="{gutter: 20, controls: '#jobs'}" class="uk-grid-width-small-1-2 uk-grid-width-medium-1-3 uk-grid-width-large-1-4 tm-grid-heights">
+        </div>
+
+        <!--hr class="uk-article-divider uk-margin-small"-->
+
+        <!--职位列表-->
         <div class="uk-clearfix uk-vertical-align uk-margin-remove" v-for="post in posts">
             <img class="uk-border-rounded uk-align-medium-left uk-vertical-align-middle uk-margin-small-bottom" v-bind:src="post.image" alt="封面图片" width="120" height="90">
             <div class="uk-vertical-align-middle">
@@ -47,26 +28,17 @@
             </div>
             <hr class="uk-article-divider uk-margin-small">
         </div>
-        <!--继续阅读-->
+        <!--更多职位-->
         <div class="uk-container uk-text-center">
-            <a v-if="has_next" v-on:click.prevent="read_more()" class="uk-text-large" type="button"><i class="uk-icon-arrow-down"></i>继续阅读...</a>
+            <a v-if="has_next" v-on:click.prevent="read_more()" class="uk-text-large" type="button"><i class="uk-icon-arrow-down"></i>更多职位...</a>
         </div>
     </div>
 
-    <!--右侧区域-->
     <div class="uk-width" style="width: 290px">
-        <!--7日精选-->
-        <div>
-            <img src="/static/images/7day.png" class="rounded">
-        </div>
-        <!--30日精选-->
-        <div>
-            <img src="/static/images/30day.png" class="rounded">
-        </div>
-
         <div style="padding: 28px 24px;background: rgba(20,156,184,.06);border-radius: 12px;" class="uk-margin-small">
-            <h4 style="color:#149cb8">最新公告</h4>
-            <p>Stay hungry, stay foolish! --Steve Jobs</p>
+            <h4 style="color:#149cb8">免费发布职位</h4>
+            <p style="font-size: 16px">轻/松/完/成/技/术/人/才/招/聘</p>
+            <a href="javascript:void(0)" class="uk-button uk-button-primary uk-button-large" style="font-size: 16px">马上发布职位</a>
         </div>
         <div style="padding: 28px 32px;background: rgba(28,31,33,.04);border-radius: 12px;" class="uk-margin-small">
             <h4>遇到了问题？</h4>
@@ -85,75 +57,48 @@
             page: '',
             pages: '',
             has_next: false,
+            post_type: '3',
             categories: [],
-            post_type: '1',
-            current_posts_category: '',  //当前页面分类
+            current_posts_category: '企业内推',  //当前页面分类
             posts: [],
-            carousels: []
         },
         created: function () {
-            //获取轮播图片信息
-            $.ajax({
-                type: 'get',
-                url: 'api/carousels',
-                dataType: 'json',
-                success: function (msg) {
-                    console.log("轮播图片信息加载成功");
-                    vm.carousels = msg.carousels;
-                },
-                error: function (msg) {
-                    console.log("轮播图片信息加载失败");
-                }
-            });
-            //默认第一张轮播图片激活状态
-            //$('#carousel1').addClass('active');
             //加载最新文章列表
             $.ajax({
                 type: 'get',
-                url: '/api/posts?post_type=1',
+                url: '/api/posts?post_type=3',
                 dataType: 'json',
                 success: function (msg) {
-                    console.log("文章列表加载成功");
+                    console.log("职位列表加载成功");
                     vm.page = msg.page;
                     vm.has_next = msg.has_next;
                     vm.posts = msg.posts;
                 },
                 error: function (msg) {
-                    console.log("文章列表加载失败");
+                    console.log("职位列表加载失败");
                 }
             });
-            //获取文章分类信息
+            //获取职位分类
             $.ajax({
                 type: 'get',
                 url: '/api/posts/categories',
                 dataType: 'json',
                 success: function (msg) {
-                    console.log("文章分类信息加载成功");
-                    //只加载post_type=1的分类
+                    console.log("职位分类信息加载成功");
+                    //vm.categories = msg.categories;
+                    //加载post_type=2的分类信息
                     for (x in msg.categories) {
-                        if (msg.categories[x].type.substr(0,1) === '1') {
+                        if (msg.categories[x].type.substr(2,1) === '1') {
                             vm.categories = vm.categories.concat(msg.categories[x]);
                         }
                     }
                 },
                 error: function (msg) {
-                    console.log("文章分类信息加载失败");
+                    console.log("职位分类信息加载失败");
                 }
             });
-            //插入最新文章到list-tab开头
-            $('#list-tab').prepend('<a onclick="location=\'/\'" class="list-group-item list-group-item-action p-2 active show" data-toggle="list" href="javascript:void(0)">最新文章</a>');
-
-        },
-        updated(){
-            this.inits();
-
         },
         methods: {
-            inits: function(){
-                $('#carousel1').addClass('active');
-                $('#carousel2').removeClass('active');
-                $('#carousel3').removeClass('active');
-            },
             read_more: function () {
                 this.page += 1;
                 var page = this.page;
@@ -165,10 +110,10 @@
                         vm.has_next = msg.has_next;
                         vm.page = msg.page;
                         vm.posts = vm.posts.concat(msg.posts);
-                        console.log("继续阅读,文章加载成功");
+                        console.log("更多职位,加载成功");
                     },
                     error: function (msg) {
-                        console.log("继续阅读,文章加载失败");
+                        console.log("更多职位,加载失败");
                         return -1;
                     }
                 });
@@ -180,13 +125,13 @@
                     url: '/api/posts?post_type='+vm.post_type+'&'+'category='+vm.current_posts_category,
                     dataType: 'json',
                     success: function (msg) {
-                        console.log("文章列表加载成功");
+                        console.log("职位列表加载成功");
                         vm.page = msg.page;
                         vm.has_next = msg.has_next;
                         vm.posts = msg.posts;
                     },
                     error: function (msg) {
-                        console.log("文章列表加载失败");
+                        console.log("职位列表加载失败");
                     }
                 });
 

@@ -26,5 +26,5 @@ class CarouselApi(Resource):
         if carousels:
             return {'carousels': carousels}, 200
         else:
-            abort(404)
+            abort(404, message='无轮播数据')
 
