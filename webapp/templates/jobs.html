@@ -1,6 +1,6 @@
 {% extends '__base__.html' %}
 
-{% block title %}企业内推{% endblock %}
+{% block title %}极客测试-企业内推{% endblock %}
 
 {% block content %}
     <div class="uk-width" style="width: 741px">
@@ -22,7 +22,7 @@
         <div class="uk-clearfix uk-vertical-align uk-margin-remove" v-for="post in posts">
             <img class="uk-border-rounded uk-align-medium-left uk-vertical-align-middle uk-margin-small-bottom" v-bind:src="post.image" alt="封面图片" width="120" height="90">
             <div class="uk-vertical-align-middle">
-                <h4><a v-bind:href="'/post/' + post.id">{[ post.title ]}</a></h4>
+                <h4><a v-bind:href="'/jobs/' + post.id">{[ post.title ]}</a></h4>
                 <p>{[ post.summary ]}</p>
                 <p class="uk-article-meta uk-margin-small-bottom"><i class="uk-icon-user"></i>&nbsp;{[ post.nickname ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-calendar"></i>&nbsp;{[ post.create_time.substr(0,10) ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-eye"></i>&nbsp;{[ post.page_view ]}</p>
             </div>

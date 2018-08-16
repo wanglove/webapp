@@ -23,6 +23,17 @@ def videos_page():
     return render_template('videos.html', user=user)
 
 
+# 视频详情
+@app.route('/videos/<string:post_id>')
+def show_video(post_id):
+    token = request.cookies.get('token')
+    user = None
+    if token:
+        user = User.verify_auth_token(token)
+
+    return render_template('post.html', user=user, post_id=post_id)
+
+
 # 企业内推页面
 @app.route('/jobs')
 def jobs_page():
@@ -31,6 +42,17 @@ def jobs_page():
     if token:
         user = User.verify_auth_token(token)
     return render_template('jobs.html', user=user)
+
+
+# 职位详情
+@app.route('/jobs/<string:post_id>')
+def show_job(post_id):
+    token = request.cookies.get('token')
+    user = None
+    if token:
+        user = User.verify_auth_token(token)
+
+    return render_template('post.html', user=user, post_id=post_id)
 
 
 # 注册页面
@@ -63,7 +85,7 @@ def reset_password_page():
 
 
 # 文章详情
-@app.route('/post/<string:post_id>')
+@app.route('/posts/<string:post_id>')
 def show_post(post_id):
     token = request.cookies.get('token')
     user = None
