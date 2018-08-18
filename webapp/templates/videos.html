@@ -63,13 +63,13 @@
                     console.log("视频列表加载失败");
                 }
             });
-            //获取文章分类信息
+            //获取视频分类信息
             $.ajax({
                 type: 'get',
                 url: '/api/posts/categories',
                 dataType: 'json',
                 success: function (msg) {
-                    console.log("文章分类信息加载成功");
+                    console.log("视频分类信息加载成功");
                     //vm.categories = msg.categories;
                     //加载post_type=2的分类信息
                     for (x in msg.categories) {
@@ -79,7 +79,7 @@
                     }
                 },
                 error: function (msg) {
-                    console.log("文章分类信息加载失败");
+                    console.log("视频分类信息加载失败");
                 }
             });
         },
@@ -95,10 +95,10 @@
                         vm.has_next = msg.has_next;
                         vm.page = msg.page;
                         vm.posts = vm.posts.concat(msg.posts);
-                        console.log("继续阅读,文章加载成功");
+                        console.log("继续阅读,视频加载成功");
                     },
                     error: function (msg) {
-                        console.log("继续阅读,文章加载失败");
+                        console.log("继续阅读,视频加载失败");
                         return -1;
                     }
                 });
@@ -110,13 +110,13 @@
                     url: '/api/posts?post_type='+vm.post_type+'&'+'category='+vm.current_posts_category,
                     dataType: 'json',
                     success: function (msg) {
-                        console.log("文章列表加载成功");
+                        console.log("视频列表加载成功");
                         vm.page = msg.page;
                         vm.has_next = msg.has_next;
                         vm.posts = msg.posts;
                     },
                     error: function (msg) {
-                        console.log("文章列表加载失败");
+                        console.log("视频列表加载失败");
                     }
                 });
 

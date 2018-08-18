@@ -42,10 +42,10 @@
             posts:[]
         },
         created: function () {
-            //加载文章列表
+            //加载热门文章列表,目前文章较少,没有实现7日和30日最热，按全部文章的热度排行
             $.ajax({
                 type: 'get',
-                url: '/api/posts',
+                url: '/api/posts?page_view=desc',
                 dataType: 'json',
                 success: function (msg) {
                     console.log("文章列表加载成功");

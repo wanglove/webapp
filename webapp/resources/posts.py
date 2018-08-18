@@ -41,6 +41,7 @@ class PostApi(Resource):
         self.parser.add_argument('summary', type=str)
         self.parser.add_argument('tags', type=str)
         self.parser.add_argument('content', type=str)
+        self.parser.add_argument('page_view', type=str)
         self.parser.add_argument('token', type=str, location='cookies')
 
     @marshal_with(posts_fields)
@@ -56,6 +57,11 @@ class PostApi(Resource):
         else:
 
             args = self.parser.parse_args()
+
+            # 按浏览次数多少,默认倒序
+            page_view = ''
+            if args.page_view is not None:
+                page_view = args.page_view
 
             # 设置要查询的文章类型
             post_type = ''
@@ -80,8 +86,12 @@ class PostApi(Resource):
                     per_page = args.per_page
 
             # 查询所有的文章,按时间倒序查询
-            if category == '' and post_type == '':
+            if category == '' and post_type == '' and page_view == '':
                 pagination = Post.query.order_by(Post.create_time.desc()). \
+                    paginate(page, per_page=per_page, error_out=False)
+            # 按浏览次数倒查询所有文章,7日热门和30日热门
+            elif category == '' and post_type == '' and page_view == 'desc':
+                pagination = Post.query.order_by(Post.page_view.desc()). \
                     paginate(page, per_page=per_page, error_out=False)
             # 按分类倒序查询
             elif category != '' and post_type == '':
