@@ -7,6 +7,7 @@ from webapp.resources.captchas import CaptchaApi
 from webapp.resources.posts import PostApi
 from webapp.resources.categories import CategoryApi
 from webapp.resources.carousels import CarouselApi
+from webapp.resources.syssettings import SyssetingsApi
 from webapp.emails import mail
 
 
@@ -36,6 +37,7 @@ restful_api.add_resource(CaptchaApi, '/api/captchas')
 restful_api.add_resource(PostApi, '/api/posts', '/api/posts/<string:post_id>')
 restful_api.add_resource(CategoryApi, '/api/posts/categories')
 restful_api.add_resource(CarouselApi, '/api/carousels')
+restful_api.add_resource(SyssetingsApi, '/api/syssettings')
 restful_api.init_app(app)
 
 import webapp.views

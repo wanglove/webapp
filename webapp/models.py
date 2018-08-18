@@ -136,6 +136,14 @@ class Carousel(db.Model):
     summary = db.Column(db.String(200), comment='文章摘要')
 
 
+class Syssetting(db.Model):
+    __tablename__ = 'syssetings'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='id')
+    index_notice = db.Column(db.Text, comment='首页的公告内容')
+    video_notice = db.Column(db.Text, comment='视频页的公告内容')
+    job_notice = db.Column(db.Text, comment='企业内推页的公告内容')
+
+
 class Comment(db.Model):
     __tablename__='comments'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='评论id')
