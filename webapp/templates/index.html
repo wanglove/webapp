@@ -18,7 +18,7 @@
           <!-- 轮播图片 -->
           <div class="carousel-inner rounded">
             <div v-bind:id="'carousel' + carousel.id" class="carousel-item" v-for="carousel in carousels">
-                <a v-bind:href="'/post/' + carousel.postid"><img v-bind:src="carousel.image"></a>
+                <a v-bind:href="'/posts/' + carousel.postid" target="_blank"><img v-bind:src="carousel.image"></a>
                 <div class="carousel-caption d-none d-md-block">
                     <!--h5>第一张图片</h5-->
                     <p>{[ carousel.summary ]}</p>
@@ -41,7 +41,7 @@
         <div class="uk-clearfix uk-vertical-align uk-margin-remove" v-for="post in posts">
             <img class="uk-border-rounded uk-align-medium-left uk-vertical-align-middle uk-margin-small-bottom" v-bind:src="post.image" alt="封面图片" width="120" height="90">
             <div class="uk-vertical-align-middle">
-                <h4><a v-bind:href="'/posts/' + post.id">{[ post.title ]}</a></h4>
+                <h4><a v-bind:href="'/posts/' + post.id" target="_blank">{[ post.title ]}</a></h4>
                 <p>{[ post.summary ]}</p>
                 <p class="uk-article-meta uk-margin-small-bottom"><i class="uk-icon-user"></i>&nbsp;{[ post.nickname ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-calendar"></i>&nbsp;{[ post.create_time.substr(0,10) ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-eye"></i>&nbsp;{[ post.page_view ]}</p>
             </div>
@@ -57,11 +57,11 @@
     <div class="uk-width" style="width: 290px">
         <!--7日精选-->
         <div>
-            <img src="/static/images/7day.png" class="rounded">
+            <a href="/hot-posts/7" target="_blank"><img src="/static/images/7day.png" class="rounded"></a>
         </div>
         <!--30日精选-->
         <div>
-            <img src="/static/images/30day.png" class="rounded">
+            <a href="/hot-posts/30" target="_blank"><img src="/static/images/30day.png" class="rounded"></a>
         </div>
 
         <div style="padding: 28px 24px;background: rgba(20,156,184,.06);border-radius: 12px;" class="uk-margin-small">

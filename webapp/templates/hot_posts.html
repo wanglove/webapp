@@ -1,0 +1,71 @@
+{% extends '__base__.html' %}
+
+{% block title %}文章加载中...{% endblock %}
+
+{% block content %}
+    <div class="uk-width uk-container-center" style="width: 635px">
+        <div v-if="days === 7">
+            <img src="/static/images/seven-hot-posts.png">
+        </div>
+        <div v-if="days === 30">
+            <img src="/static/images/thirty-hot-posts.png">
+        </div>
+        <hr class="uk-article-divider uk-margin-small">
+        <!--文章列表-->
+        <div class="uk-clearfix uk-vertical-align uk-margin-remove" v-for="post in posts">
+            <img class="uk-border-rounded uk-align-medium-left uk-vertical-align-middle uk-margin-small-bottom" v-bind:src="post.image" alt="封面图片" width="120" height="90">
+            <div class="uk-vertical-align-middle">
+                <h4><a v-bind:href="'/posts/' + post.id" target="_blank">{[ post.title ]}</a></h4>
+                <p>{[ post.summary ]}</p>
+                <p class="uk-article-meta uk-margin-small-bottom"><i class="uk-icon-user"></i>&nbsp;{[ post.nickname ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-calendar"></i>&nbsp;{[ post.create_time.substr(0,10) ]}&nbsp;&nbsp;&nbsp;&nbsp;<i class="uk-icon-eye"></i>&nbsp;{[ post.page_view ]}</p>
+            </div>
+            <hr class="uk-article-divider uk-margin-small">
+        </div>
+        <!--继续阅读-->
+        <div class="uk-container uk-text-center">
+            <a v-if="has_next" v-on:click.prevent="read_more()" class="uk-text-large" type="button"><i class="uk-icon-arrow-down"></i>继续阅读...</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block vuejs %}
+<script>
+    var post_url='/api/posts?days={{ days }}';
+    var days={{ days }};
+    var vm = new Vue({
+        delimiters: ['{[', ']}'],
+        el: '#vm',
+        data: {
+            days: '',
+            page: '',
+            has_next: false,
+            posts:[]
+        },
+        created: function () {
+            //加载文章列表
+            $.ajax({
+                type: 'get',
+                url: '/api/posts',
+                dataType: 'json',
+                success: function (msg) {
+                    console.log("文章列表加载成功");
+                    vm.page = msg.page;
+                    vm.has_next = msg.has_next;
+                    vm.posts = msg.posts;
+                    vm.days=days;
+                    if (vm.days === 7){
+                        $('title').html('极客测试-7日热门')   //设置网页标题
+                    }
+                    else {
+                        $('title').html('极客测试-30日热门')   //设置网页标题
+                    }
+                },
+                error: function (msg) {
+                    console.log("文章列表加载失败");
+                }
+            });
+
+        }
+    })
+</script>
+{% endblock %}

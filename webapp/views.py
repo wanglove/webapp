@@ -95,6 +95,17 @@ def show_post(post_id):
     return render_template('post.html', user=user, post_id=post_id)
 
 
+# 7日/30日热门文章
+@app.route('/hot-posts/<int:days>')
+def show_hot_post(days):
+    token = request.cookies.get('token')
+    user = None
+    if token:
+        user = User.verify_auth_token(token)
+
+    return render_template('hot_posts.html', user=user, days=days)
+
+
 # 新建 文章页面
 @app.route('/manage/posts/create')
 def new_post():
