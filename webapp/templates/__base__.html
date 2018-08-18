@@ -20,11 +20,17 @@
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <!--markdown编辑器依赖-->
     {% block beforehead %}<!-- before head  -->{% endblock %}
+    <style>
+        a:link {color:#000000;}     /* 未访问链接 */
+        a:visited {color: #7c7c7c;}  /* 已访问链接 */
+        a:hover {color:#000000;}    /* 鼠标移动到链接上 */
+        a:active {color:#000000;}   /* 鼠标点击时 */
+    </style>
 </head>
 <body>
     <nav class="uk-navbar uk-navbar-attached" style="background: #ffffff;">
         <div class="uk-container uk-container-center">
-            <a href="/" class="uk-navbar-brand">极客测试</a>
+            <a href="/" class="uk-navbar-brand" style="color: #000000">极客测试</a>
             <ul class="uk-navbar-nav uk-hidden-small">
                 <li><a href="/"><i class="uk-icon-home"></i>首页</a></li>
                 <li><a href="/videos" target="_blank"><i class="uk-icon-youtube-play"></i>视频</a></li>
