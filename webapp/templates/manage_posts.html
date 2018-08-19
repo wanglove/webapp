@@ -15,7 +15,8 @@
     </div>
 
     <div class="uk-width-1-1">
-        <a href="/manage/posts/create" class="uk-button uk-button-primary"><i class="uk-icon-plus"></i>新文章</a>
+        <!--a href="/manage/posts/create" class="uk-button uk-button-primary"><i class="uk-icon-plus"></i>新文章</a-->
+        <button type="button" onclick="location='/manage/posts/create'" class="uk-button uk-button-primary"><i class="uk-icon-plus"></i>新文章</button>
 
         <table class="uk-table uk-table-hover">
             <thead>
@@ -129,7 +130,7 @@
                 page = this.page;
                 $.ajax({
                     type: 'get',
-                    url: '/api/posts?page='+page+'&'+'per_page=2',
+                    url: '/api/posts?page='+page+'&'+'per_page=20',
                     dataType: 'json',
                     success: function (msg) {
                         vm.has_prev = msg.has_prev;
@@ -149,7 +150,7 @@
                 page = this.page;
                 $.ajax({
                     type: 'get',
-                    url: '/api/posts?page='+page+'&'+'per_page=2',
+                    url: '/api/posts?page='+page+'&'+'per_page=20',
                     dataType: 'json',
                     success: function (msg) {
                         vm.has_prev = msg.has_prev;
