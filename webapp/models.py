@@ -91,7 +91,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='文章id')
     userid = db.Column(db.String(50), comment='作者用户id')
     nickname = db.Column(db.String(50), comment='作者昵称')
-    post_type = db.Column(db.String(1), default='1', comment='文章类型,1=文章,2=视频')
+    post_type = db.Column(db.String(50), default='文章', comment='文章类型,文章,视频,企业内推')
     title = db.Column(db.String(50), comment='文章标题')
     image = db.Column(db.String(256), comment='封面图片')
     category = db.Column(db.String(50), nullable=False, comment='文章分类')

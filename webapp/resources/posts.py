@@ -126,15 +126,12 @@ class PostApi(Resource):
 
         args = self.parser.parse_args()
         # 校验参数必须填写
-        if args.title is None or args.category is None\
+        if args.title is None or args.post_type is None or args.category is None\
                 or args.summary is None or args.content is None:
             abort(400)
 
-        # 文章类型,1是普通文章,2是视频
-        if args.post_type is None:
-            post_type = '1'
-        else:
-            post_type = args.post_type
+        # 文章类型,文章,视频,企业内推
+        post_type = args.post_type
 
         # 校验用户身份 admin用户允许新增文章
         if args.token is None:
@@ -185,6 +182,18 @@ class PostApi(Resource):
 
     # 根据id删除文章
     def delete(self, post_id):
+
+        args = self.parser.parse_args()
+
+        # 校验用户身份 admin用户允许新增文章
+        if args.token is None:
+            abort(403)
+        user = User.verify_auth_token(args.token)
+        if user is None:
+            abort(403)
+        if user.username != '251319710@qq.com':
+            abort(403)
+
         post = Post.query.get(post_id)
         if post:
             db.session.delete(post)

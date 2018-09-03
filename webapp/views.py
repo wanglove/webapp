@@ -137,11 +137,16 @@ def edit_post(post_id):
 # 管理文章页面
 @app.route('/manage/posts')
 def manage_posts():
+
+    # 用户没登陆,跳转到登陆页面
+    response = make_response(redirect(url_for('login_page')))
+    response.set_cookie('token', 'deleted', max_age=0, path='/', httponly=True)
+
     token = request.cookies.get('token')
     if token is None:
-        abort(403)
+        return response
     user = User.verify_auth_token(token)
     if user is None:
-        abort(403)
+        return response
 
     return render_template('manage_posts.html', user=user)

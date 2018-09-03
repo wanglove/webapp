@@ -40,14 +40,13 @@
                     vm.post.create_time = msg.posts[0].create_time;
                     vm.post.page_view = msg.posts[0].page_view;
                     vm.post.content = marked(msg.posts[0].content);
-                    $('title').html(vm.post.title)   //设置网页标题
+                    $('title').html(vm.post.title);   //设置网页标题
                 },
                 error: function (msg) {
                     alert("文章加载失败");
                 }
             });
-
         }
-    })
+    });
 </script>
 {% endblock %}

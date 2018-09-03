@@ -71,7 +71,8 @@
         <div style="padding: 28px 27px;background: rgba(28,31,33,.04);border-radius: 12px;" class="uk-margin-small">
             <h4>遇到了问题？</h4>
             <p>加入官方交流群，每日定期推荐优质学习资料以及求职经验干货，与更多IT工作者交流学习！</p>
-            <span><b style="color:#149cb8">群号：662526455</b></span>
+            <span><b style="color:#149cb8">群号：662526455</b></span><br>
+            <button href="/static/images/wx-lei.jpg" data-uk-lightbox class="uk-button uk-button-primary uk-button-small"><i class="uk-icon-wechat"></i> 联系管理员</button>
         </div>
     </div>
 {% endblock %}
@@ -86,7 +87,7 @@
             pages: '',
             has_next: false,
             categories: [],
-            post_type: '1',
+            post_type: '文章',
             current_posts_category: '',  //当前页面分类
             posts: [],
             carousels: [],
@@ -109,7 +110,7 @@
             //加载最新文章列表
             $.ajax({
                 type: 'get',
-                url: '/api/posts?post_type=1',
+                url: '/api/posts?post_type=文章',
                 dataType: 'json',
                 success: function (msg) {
                     console.log("文章列表加载成功");
@@ -141,7 +142,7 @@
                 dataType: 'json',
                 success: function (msg) {
                     console.log("文章分类信息加载成功");
-                    //只加载post_type=1的分类
+                    //只加载post_type=文章 的分类
                     for (x in msg.categories) {
                         if (msg.categories[x].type.substr(0,1) === '1') {
                             vm.categories = vm.categories.concat(msg.categories[x]);

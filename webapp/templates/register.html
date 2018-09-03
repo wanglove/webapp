@@ -13,16 +13,19 @@
     var vm = new Vue({
         el: '#vm',
         data: {
-            nickname: 'wanglei',
-            email: '251319710@qq.com',
+            nickname: '',
+            email: '',
             captcha: '',
-            password1: '12345678',
-            password2: '12345678'
+            password1: '',
+            password2: ''
         },
         methods: {
             submit: function () {
                 if (!this.nickname){
                     return alert('请输入昵称');
+                }
+                if (this.nickname.length > 20) {
+                    return alert('昵称长度过长');
                 }
                 if (!validateEmail(this.email)){
                     return alert('请输入正确的邮箱地址');
@@ -30,8 +33,8 @@
                 if (!this.captcha){
                     return alert('请输入邮箱中的接收到的验证码')
                 }
-                if (this.password1.length<8){
-                    return alert('密码长度至少8位字符');
+                if (this.password1.length<8 || this.password1.length >20){
+                    return alert('密码长度必须8-20字符');
                 }
                 if (this.password1 !== this.password2){
                     return alert('两次输入的密码不一致');

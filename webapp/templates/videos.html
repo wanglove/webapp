@@ -8,12 +8,13 @@
     <div class="uk-width-1-1">
         <ul id="videos" class="uk-subnav uk-subnav-pill uk-margin-small">
             <li data-uk-filter class="uk-active"><a href="javascript:void(0)" onclick="location='/videos'">所有视频</a></li>
-            <li v-bind:data-uk-filter="category.category" v-for="category in categories"><a v-on:click.prevent="list_posts(category)" href="javascript:void(0)">{[ category.category ]}</a></li>
+            <li v-bind:data-uk-filter="category.category" v-for="category in categories"><a v-on:click="list_posts(category)" href="javascript:void(0)">{[ category.category ]}</a></li>
         </ul>
-
         <hr class="uk-article-divider uk-margin-small">
-
         <div data-uk-grid="{gutter: 20, controls: '#videos'}" class="uk-grid-width-small-1-2 uk-grid-width-medium-1-3 uk-grid-width-large-1-4 tm-grid-heights">
+        </div>
+
+        <div data-uk-grid="{gutter: 20}" class="uk-grid-width-small-1-2 uk-grid-width-medium-1-3 uk-grid-width-large-1-4 tm-grid-heights">
             <div v-bind:data-uk-filter="post.category" v-for="post in posts">
                 <a class="uk-thumbnail" v-bind:href="'/videos/' + post.id" target="_blank">
                     <img v-bind:src="post.image" alt="封面图片">
@@ -43,26 +44,11 @@
             pages: '',
             has_next: false,
             categories: [],
-            post_type: '2',
+            post_type: '视频',
             current_posts_category: '',  //当前页面分类
             posts: []
         },
         created: function () {
-            //加载视频列表
-            $.ajax({
-                type: 'get',
-                url: '/api/posts?post_type=2',
-                dataType: 'json',
-                success: function (msg) {
-                    console.log("视频列表加载成功");
-                    vm.page = msg.page;
-                    vm.has_next = msg.has_next;
-                    vm.posts = msg.posts;
-                },
-                error: function (msg) {
-                    console.log("视频列表加载失败");
-                }
-            });
             //获取视频分类信息
             $.ajax({
                 type: 'get',
@@ -80,6 +66,21 @@
                 },
                 error: function (msg) {
                     console.log("视频分类信息加载失败");
+                }
+            });
+            //加载视频列表
+            $.ajax({
+                type: 'get',
+                url: '/api/posts?post_type=视频',
+                dataType: 'json',
+                success: function (msg) {
+                    console.log("视频列表加载成功");
+                    vm.page = msg.page;
+                    vm.has_next = msg.has_next;
+                    vm.posts = msg.posts;
+                },
+                error: function (msg) {
+                    console.log("视频列表加载失败");
                 }
             });
         },
@@ -119,7 +120,6 @@
                         console.log("视频列表加载失败");
                     }
                 });
-
             }
         }
     })

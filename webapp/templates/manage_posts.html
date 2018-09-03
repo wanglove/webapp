@@ -22,7 +22,8 @@
             <thead>
                 <tr>
                     <th class="uk-width-3-10">标题</th>
-                    <th class="uk-width-2-10">分类</th>
+                    <th class="uk-width-1-10">类型</th>
+                    <th class="uk-width-1-10">分类</th>
                     <th class="uk-width-2-10">作者</th>
                     <th class="uk-width-2-10">创建时间</th>
                     <th class="uk-width-1-10">操作</th>
@@ -31,13 +32,16 @@
             <tbody>
                 <tr v-for="post in posts" >
                     <td>
-                        <a target="_blank" v-bind:href="'/post/'+post.id">{[ post.title ]}</a>
+                        <a target="_blank" v-bind:href="'/posts/'+post.id">{[ post.title ]}</a>
+                    </td>
+                    <td>
+                        <span v-text="post.post_type"></span>
                     </td>
                     <td>
                         <span v-text="post.category"></span>
                     </td>
                     <td>
-                        <a target="_blank" v-bind:href="'/user/'+post.userid">{[ post.nickname ]}</a>
+                        <a target="_blank" v-bind:href="'/users/'+post.userid">{[ post.nickname ]}</a>
                     </td>
                     <td>
                         <span v-text="post.create_time"></span>
@@ -91,14 +95,14 @@
         created: function () {
             $.ajax({
                 type: 'get',
-                url: '/api/posts?per_page=2',
+                url: '/api/posts?per_page=20',
                 dataType: 'json',
                 success: function (msg) {
                     console.log("文章列表加载成功:");
                     vm.has_prev = msg.has_prev;
                     vm.has_next = msg.has_next;
                     vm.page = msg.page;
-                    vm.posts = vm.posts.concat(msg.posts);
+                    vm.posts = msg.posts;
                 },
                 error: function (msg) {
                     alert("文章加载失败");
@@ -118,6 +122,13 @@
                         dataType: 'json',
                         success: function (msg) {
                             alert("文章删除成功");
+                            //删除数组中的该文章,vue自动显示删除后的页面
+                            for (x in vm.posts) {
+                                if (vm.posts[x].id === post.id) {
+                                    vm.posts.splice(x,1);
+                                    break;
+                                }
+                            }
                         },
                         error: function (msg) {
                             alert("文章删除失败"+msg.message);
@@ -140,8 +151,7 @@
                         console.log("跳转到分页"+page);
                     },
                     error: function (msg) {
-                        console.log("文章加载失败11111");
-                        return -1;
+                        console.log("文章加载失败");
                     }
                 });
             },
@@ -160,7 +170,7 @@
                         console.log("跳转到分页"+page);
                     },
                     error: function (msg) {
-                        console.log("文章加载失败222222");
+                        console.log("文章加载失败");
                     }
                 });
             },
