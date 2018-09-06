@@ -4,18 +4,18 @@
     <meta charset="utf-8" />
     {% block meta %}<!-- block meta  -->{% endblock %}
     <title>{% block title %} ? {% endblock %}</title>
-    <link rel="stylesheet" href="/static/css/uikit.min.css">
-    <link rel="stylesheet" href="/static/css/uikit.gradient.min.css">
+    <link href="https://cdn.bootcss.com/uikit/2.27.5/css/uikit.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/uikit/2.27.5/css/uikit.gradient.min.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
     <script src="https://cdn.bootcss.com/crypto-js/3.1.9/core.js"></script>
     <script src="https://cdn.bootcss.com/crypto-js/3.1.9/crypto-js.js"></script>
     <script src="https://cdn.bootcss.com/marked/0.4.0/marked.js"></script>
-    <script src="/static/js/uikit.min.js"></script>
+    <script src="https://cdn.bootcss.com/uikit/2.27.5/js/uikit.min.js"></script>
     <script src="https://cdn.bootcss.com/vue/2.4.2/vue.min.js"></script>
     <!--视频页面框架js-->
-    <script src="/static/js/components/grid.js"></script>
+    <script src="https://cdn.bootcss.com/uikit/2.27.5/js/components/grid.min.js"></script>
     <!--弹出灯箱图片-->
-    <script src="/static/js/components/lightbox.js"></script>
+    <script src="https://cdn.bootcss.com/uikit/2.27.5/js/components/lightbox.min.js"></script>
     <!--支持轮播图片-->
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
     <script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
@@ -29,7 +29,7 @@
         a:active {color:#000000;}   /* 鼠标点击时 */
     </style>
 </head>
-<body>
+<body class="uk-height-viewport">
     <nav class="uk-navbar uk-navbar-attached" style="background: #ffffff;">
         <div class="uk-container uk-container-center">
             <a href="/" class="uk-navbar-brand" style="color: #000000">极客测试</a>

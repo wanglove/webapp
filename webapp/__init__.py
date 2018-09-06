@@ -19,8 +19,7 @@ app.config.from_object('webapp.config')
 # 初始化数据库应用
 db.init_app(app)
 
-# 创建表，生产中去除
-#db.drop_all(app=app)
+# 如果没有表,创建表
 db.create_all(app=app)
 
 # 初始化邮件发送实例

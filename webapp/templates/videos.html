@@ -14,7 +14,7 @@
         <div data-uk-grid="{gutter: 20, controls: '#videos'}" class="uk-grid-width-small-1-2 uk-grid-width-medium-1-3 uk-grid-width-large-1-4 tm-grid-heights">
         </div>
 
-        <div data-uk-grid="{gutter: 20}" class="uk-grid-width-small-1-2 uk-grid-width-medium-1-3 uk-grid-width-large-1-4 tm-grid-heights">
+        <div data-uk-grid="{gutter: 20}" class="uk-grid-width-large-1-4">
             <div v-bind:data-uk-filter="post.category" v-for="post in posts">
                 <a class="uk-thumbnail" v-bind:href="'/videos/' + post.id" target="_blank">
                     <img v-bind:src="post.image" alt="封面图片">
